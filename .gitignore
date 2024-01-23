@@ -6,6 +6,25 @@ __pycache__/
 # C extensions
 *.so
 
+# Compilation output
+/output/
+/incremental_db/
+/db/
+
+# Temporary files
+/*.rpt
+/*.chg
+/*.htm
+/*.eqn
+/*.pin
+/*.sof
+/*.pof
+
+# User-specific files
+/*.qws
+
+
+
 # Distribution / packaging
 .Python
 build/
