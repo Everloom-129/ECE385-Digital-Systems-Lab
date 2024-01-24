@@ -1,0 +1,9 @@
+|ECE385_Lab_01
+Z <= inst2.DB_MAX_OUTPUT_PORT_TYPE
+C => inst1.IN0
+B => inst3.IN0
+B => inst3.IN1
+B => inst.IN0
+A => inst.IN1
+
+
