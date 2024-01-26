@@ -12,25 +12,29 @@ __pycache__/
 **/db/
 **/temp/
 
-# Temporary files
-/*.rpt
-/*.chg
-/*.htm
-/*.eqn
-/*.pin
-/*.sof
-/*.pof
 
-*/db/
-*/output_files/
-*/simulation/
+
+# Temporary files
+*.rpt
+*.chg
+*.htm
+*.eqn
+*.pin
+*.sof
+*.pof
+
+**/db/
+**/output_files/
+**/simulation/
 
 # User-specific files
-/*.qws
+*.qws
 
 *.qdb
 *.do
 *.xrf
+
+~$*
 
 # Distribution / packaging
 .Python
