@@ -7,9 +7,10 @@ __pycache__/
 *.so
 
 # Compilation output
-/output/
-/incremental_db/
-/db/
+**/output/
+**/incremental_db/
+**/db/
+**/temp/
 
 # Temporary files
 /*.rpt
@@ -20,10 +21,16 @@ __pycache__/
 /*.sof
 /*.pof
 
+*/db/
+*/output_files/
+*/simulation/
+
 # User-specific files
 /*.qws
 
-
+*.qdb
+*.do
+*.xrf
 
 # Distribution / packaging
 .Python
