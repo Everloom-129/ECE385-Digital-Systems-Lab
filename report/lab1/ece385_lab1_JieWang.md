@@ -44,6 +44,23 @@ to eliminate all static-1 hazards (glitches) at the output. (For a discussion on
 
 ![image-20240124183936293](./ece385_lab1_JieWang.assets/image-20240124183936293.png)
 
+
+
+### Truth Table for Circuit Part A (without AC term) and Part B (with AC term)
+
+| A    | B    | C    | Z = AB + BC |      | A    | B    | C    | Z = AB + BC + AC |
+| ---- | ---- | ---- | ----------- | ---- | ---- | ---- | ---- | ---------------- |
+| 0    | 0    | 0    | 0           |      | 0    | 0    | 0    | 0                |
+| 0    | 0    | 1    | 1           |      | 0    | 0    | 1    | 1                |
+| 0    | 1    | 0    | 0           |      | 0    | 1    | 0    | 0                |
+| 0    | 1    | 1    | 1           |      | 0    | 1    | 1    | 1                |
+| 1    | 0    | 0    | 0           |      | 1    | 0    | 0    | 0                |
+| 1    | 0    | 1    | 1           |      | 1    | 0    | 1    | 1                |
+| 1    | 1    | 0    | 1           |      | 1    | 1    | 0    | 1                |
+| 1    | 1    | 1    | 1           |      | 1    | 1    | 1    | 1                |
+
+Note: The center column separates the truth tables for the original circuit (Part A) and the modified circuit (Part B). In simulations, both circuits will output the same result since ModelSim treats all TTL components as ideal with zero delay. However, due to propagation delays in actual devices, the output will exhibit a temporary "0" when A and C are "1" and B transitions from "1" to "0" in the original circuit. This static hazard is addressed in the modified circuit, preventing the glitch from occurring.
+
 ## Lab
 
 >  [[LC1\]](#_msoanchor_1)Please check Zuofu’s video and waveforms for more information
