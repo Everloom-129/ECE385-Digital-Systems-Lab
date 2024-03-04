@@ -1,7 +1,7 @@
 /*<simulation_settings>
-<ftestbench_cmd>quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off lab3 -c lab3 --vector_source="D:/intelFPGA_lite/Lab/LAB3/Waveform.vwf" --testbench_file="D:/intelFPGA_lite/Lab/LAB3/simulation/qsim/Waveform.vwf.vt"</ftestbench_cmd>
+<ftestbench_cmd>quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off lab3 -c lab3 --vector_source="D:/intelFPGA_lite/ECE385-Digital-Systems-Lab/LAB3/Waveform.vwf" --testbench_file="D:/intelFPGA_lite/ECE385-Digital-Systems-Lab/LAB3/simulation/qsim/Waveform.vwf.vt"</ftestbench_cmd>
 <ttestbench_cmd>quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off lab3 -c lab3 --vector_source="F:/ZJUI2019SPRING/ECE385/lab 3/Waveform.vwf" --testbench_file="F:/ZJUI2019SPRING/ECE385/lab 3/simulation/qsim/Waveform.vwf.vt"</ttestbench_cmd>
-<fnetlist_cmd>quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="D:/intelFPGA_lite/Lab/LAB3/simulation/qsim/" lab3 -c lab3</fnetlist_cmd>
+<fnetlist_cmd>quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="D:/intelFPGA_lite/ECE385-Digital-Systems-Lab/LAB3/simulation/qsim/" lab3 -c lab3</fnetlist_cmd>
 <tnetlist_cmd>quartus_eda --write_settings_files=off --simulation --functional=off --flatten_buses=off --timescale=1ps --tool=modelsim_oem --format=verilog --output_directory="F:/ZJUI2019SPRING/ECE385/lab 3/simulation/qsim/" lab3 -c lab3</tnetlist_cmd>
 <modelsim_script>onerror {exit -code 1}
 vlib work
@@ -20,6 +20,7 @@ proc simTimestamp {} {
 after 2500 simTimestamp
 run -all
 quit -f
+
 </modelsim_script>
 <modelsim_script_timing>onerror {exit -code 1}
 vlib work
@@ -48,6 +49,7 @@ quit -f
 
 
 
+
 </modelsim_script_timing>
 <hdl_lang>verilog</hdl_lang>
 </simulation_settings>*/
@@ -58,9 +60,9 @@ the Block Editor! File corruption is VERY likely to occur.
 */
 
 /*
-Copyright (C) 2018  Intel Corporation. All rights reserved.
+Copyright (C) 2020  Intel Corporation. All rights reserved.
 Your use of Intel Corporation's design tools, logic functions 
-and other software and tools, and its AMPP partner logic 
+and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
 (including device programming or simulation files), and any 
 associated documentation or information are expressly subject 
@@ -70,7 +72,8 @@ the Intel FPGA IP License Agreement, or other applicable license
 agreement, including, without limitation, that your use is for
 the sole purpose of programming logic devices manufactured by
 Intel and sold by Intel or its authorized distributors.  Please
-refer to the applicable agreement for further details.
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
 */
 
 HEADER
