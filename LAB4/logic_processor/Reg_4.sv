@@ -1,6 +1,5 @@
 // Edit: 
 // - Jie Wang 0308 
-// TODO: 
 // - new module reg_8
 // - input output size
 

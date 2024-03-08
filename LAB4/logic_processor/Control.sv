@@ -1,7 +1,6 @@
 //Two-always example for state machine
 // Edit: 
 // - Jie Wang 0308 
-// TODO: 
 // - Add 4 more state
 // - output variatio ?
 module control (input  logic Clk, Reset, LoadA, LoadB, Execute,

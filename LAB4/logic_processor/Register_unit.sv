@@ -1,6 +1,5 @@
 // Edit: 
 // - Jie Wang 0308 
-// TODO: 
 // - new module register_unit_8
 // - regsize 4-> 8
 

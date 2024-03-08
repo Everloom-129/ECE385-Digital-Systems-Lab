@@ -11,7 +11,7 @@ logic Reset, LoadA, LoadB, Execute;
 logic [7:0] Din;
 logic [2:0] F;
 logic [1:0] R;
-logic [3:0] LED;
+logic [3:0] LED; // This is fixed!
 logic [7:0] Aval,
 		 Bval;
 logic [6:0] AhexL,
