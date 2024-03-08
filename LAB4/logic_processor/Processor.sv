@@ -2,6 +2,12 @@
 //for use with ECE 385 Fall 2016
 //last modified by Zuofu Cheng
 
+// Edit: 
+// - Jie Wang 0308 
+// TODO: 
+// - expand input and output size from 4 to 8, don't change control signal
+// - modify Instantiation
+// - Hex driver change, why?
 
 //Always use input/output logic types when possible, prevents issues with tools that have strict type enforcement
 

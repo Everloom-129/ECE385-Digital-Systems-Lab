@@ -1,3 +1,9 @@
+// Edit: 
+// - Jie Wang 0308 
+// TODO: 
+// - new module reg_8
+// - input output size
+
 module reg_4 (input  logic Clk, Reset, Shift_In, Load, Shift_En,
               input  logic [3:0]  D,
               output logic Shift_Out,

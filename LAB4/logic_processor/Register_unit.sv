@@ -1,3 +1,9 @@
+// Edit: 
+// - Jie Wang 0308 
+// TODO: 
+// - new module register_unit_8
+// - regsize 4-> 8
+
 module register_unit (input  logic Clk, Reset, A_In, B_In, Ld_A, Ld_B, 
                             Shift_En,
                       input  logic [3:0]  D, 
