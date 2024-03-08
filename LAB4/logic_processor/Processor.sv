@@ -79,7 +79,8 @@ module Processor (input logic   Clk,     // Internal
                         .In0(B[3:0]),
                         .Out0(BhexL) );
 								
-	 //When you extend to 8-bits, you will need more HEX drivers to view upper nibble of registers, for now set to 0
+	 //When you extend to 8-bits, 
+       //you will need more HEX drivers to view upper nibble of registers, for now set to 0
 	 HexDriver        HexAU (
                         .In0(4'h0),
                         .Out0(AhexU) );	
