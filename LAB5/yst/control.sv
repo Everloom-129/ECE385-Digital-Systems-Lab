@@ -20,10 +20,11 @@ module control(
 
     // state wait load
     logic control_signal_load;
-    if (control_signal_run && ClearA_LoadB)
+    if (control_signal_run && ClearA_LoadB) begin
         Clr_LD = 1;
-    else
+    end else begin
         Clr_LD = 0;
+    end
 
     dreg_control run_control(.Clk(Clk), .Reset(Reset), .Run(Clr_LD),.Data_out(control_signal_load) );
 
@@ -55,12 +56,14 @@ module dreg_control(
 );
     always_ff @(posedge Clk or posedge Reset) 
     begin
-        if (Reset)
+        if (Reset) begin
             Data_out <= 1'b0;
-        else if (Run)
+        end else if (Run) begin 
             Data_out <= 1'b1;
-        else
+        end
+        else begin
             Data_out <= Data_out;
+        end
     end
 endmodule
 
@@ -94,24 +97,25 @@ always_comb begin
     Add = 0;
     Sub = 0;
 
-    if (!Run) {
+    if (!Run) begin {
         // Handle not running or wait state
         ClearA = 1;
 
-    } else if (count == 5'b01110) {
+    }end else if (count == 5'b01110) begin{
         // Handle count == 14
-        if (M) 
+        if (M) begin
             Sub = 1;
-    
-    } else if (count[0] == 1) {
+        end
+    }end else if (count[0] == 1) begin {
         // Handle odd counts (Shift)
         Shift = 1;
         
-    } else {
+    }end else begin{
         // Handle even counts (Add, excluding count == 0 which is handled above)
-        if (M) 
+        if (M) begin
             Add = 1;
-    }
+        end
+    }end
 end
 
 endmodule

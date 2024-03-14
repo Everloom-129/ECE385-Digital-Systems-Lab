@@ -3,7 +3,7 @@ module adder_8bits_with_Subtract(
     input logic[7:0] b, 
     input logic subtract, 
     output logic[8:0] result, 
-    output logic carry_out, 
+    output logic carry_out  
 );
     logic[7:0] b_adjusted;
     logic b_cin; 
