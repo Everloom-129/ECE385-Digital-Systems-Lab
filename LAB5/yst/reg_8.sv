@@ -1,4 +1,4 @@
-module register_8bits
+module reg_8
 (
     input   logic   Clk, Reset, Left_shift_In, Load_d, Shift_function,
     input   logic[7:0] Data_in,
