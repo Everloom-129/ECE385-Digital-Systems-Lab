@@ -1,4 +1,4 @@
-module adder_8bits_with_Subtract(
+module adder_sub(
     input logic[7:0] a, 
     input logic[7:0] b, 
     input logic subtract, 
