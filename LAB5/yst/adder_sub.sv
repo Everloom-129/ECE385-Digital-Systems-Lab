@@ -7,11 +7,12 @@ module adder_sub(
 );
     logic[7:0] b_adjusted;
     logic b_cin; 
+    logic carry_out_8bit; // For the carry out of the 8-bit adder
 
     assign b_adjusted = b ^ {8{subtract}};
     assign b_cin = subtract; 
 
-    full_adder_8bits apply_add(a, b_adjusted, b_cin, result[7:0], carry_out);
+    full_adder_8bits apply_add(a, b_adjusted, b_cin, result[7:0], carry_out_8bit);
 
     assign a7 = a[7];
     assign b7 = b[7];

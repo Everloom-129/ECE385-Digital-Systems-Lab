@@ -31,50 +31,68 @@ module lab5_toplevel
     output  logic[7:0]      Bval
 );
 
-    /* Declare Internal Registers */
-    logic[7:0]     A;  // use this as an input to your multi
-    logic[7:0]     B;  // use this as an input to your multi
-    logic[8:0]     add_out;
+    /* Declare Internal Registers and Signals */
+    logic[7:0] A, B, S_SH;  // use this as an input to your multi
+    logic[8:0] result;
 
-	logic Reset_SH, ClearA_LoadB_SH, Run_SH;
-    logic Reset_A, Ld_A, Ld_B, Shift_En, Clear_XA, outA, outB, Sub, x_val;
-   
+    logic Reset_SH, ClearA_LoadB_SH, Run_SH;
+    logic Reset_A, opA, opB, Shift_En, Clear_A,Add, Sub, YST;
+
+    assign M = opB;
     assign Aval = A;
     assign Bval = B;
-    assign x_val = X;
 
-    assign Reset_A = Reset_SH | Clear_XA;
-   
+    assign Reset_A = Reset_SH | Clear_A;
 
     /* Behavior of registers A, B and sign X */
-    // TODO : check the reset logic 
-    
     always_ff @(posedge Clk) begin
-        
-        if (!Reset) begin
-            // if reset is pressed, clear the adder's input registers
-            A <= 8'h0000;
-            B <= 8'h0000;
-            X <= 1'b0; 
-        end else if (!ClearA_LoadB) begin
-            // If ClearA_LoadB is pressed, copy switches to register B
-            A <= 8'h0000;
-            B <= S;
-        end else begin
-            // otherwise, continuously copy switches to register A
-            A <= S;
-           
-        end
-   
+        // if (Reset_A) begin
+        //     // if reset is pressed, clear the SIGN bit
+        //     X <= 1'b0; 
+        //     A <= 8'h00; // Clear A as well if needed
+        //     B <= 8'h00; // Clear B as well if needed
+        // end else if (!ClearA_LoadB) begin
+        //     // If ClearA_LoadB is pressed, load S into register B
+        //     A <= 8'h00; // Clear A if needed when loading B
+        //     B <= S;
+        // end else if (Ld_B) begin
+        //     // Additional load behavior for B, similar to the xfp module
+        //     B <= S;
+        // end else begin
+        //     // Continuously copy switches to register A
+        //     A <= S;
+        // end
+
+        // Flip-flop behavior for X
+        if (Reset_A) begin
+            X <= 1'b0;
+        end else if (Add) begin
+            X <= result[8];
+        end // No need for an 'else' part as X will retain its value
     end
-    
-    register_unit_8 
+
+   
+    register_unit_8 reg_unit (
+                        .Clk(Clk),
+                        .Reset(Reset_A),
+                        .A_In(X),
+                        .B_In(opA),
+                        .Ld_A(Add),
+                        .Ld_B(Ld_B),
+                        .Shift_En(Shift_En),
+
+                        .D(result[7:0]),
+                        .A_out(opA),
+                        .B_out(opB),
+                        .A(A),
+                        .B(B) );
 
     adder_sub adder_8bit(
         .a(A),
         .b(B),
-        .subtract,
-        .result()
+        .subtract(Sub),
+        .result(result),
+        .carry_out(YST)
     );
 
 
@@ -84,7 +102,7 @@ module lab5_toplevel
         .Reset(Reset),
         .ClearA_LoadB(ClearA_LoadB),
         .Run(~Run),
-        .M(BShift_out),
+        .M(M),
         .Clr_LD(Ld_B),
         .ClearA(ClearA),
         .Shift(Shift_En),
@@ -97,10 +115,8 @@ module lab5_toplevel
     HexDriver HexBL (.In0(B[3:0]), .Out0(BhexL));  // Lower nibble of B
     HexDriver HexBU (.In0(B[7:4]), .Out0(BhexU));  // Upper nibble of B
 
-	  sync button_sync[3:0] (Clk, {~Reset, ~LoadA, ~LoadB, ~Execute}, {Reset_SH, LoadA_SH, LoadB_SH, Execute_SH});
-	  sync Din_sync[7:0] (Clk, Din, Din_S); // 8 bit
-	  sync F_sync[2:0] (Clk, F, F_S);
-	  sync R_sync[1:0] (Clk, R, R_S);
+	  sync button_sync[2:0] (Clk, {~Reset, ~ClearA_LoadB, ~Run}, {Reset_SH, ClearA_LoadB_SH,Run_SH});
+	  sync Din_sync[7:0] (Clk, S, S_SH); // 8 bit
 	  
     
 endmodule
