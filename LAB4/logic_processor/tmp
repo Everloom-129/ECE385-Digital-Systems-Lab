@@ -1,0 +1,48 @@
+module Processor (input logic Clk, Reset, LoadA, LoadB, Execute,
+                  input logic [7:0] Din,      // Updated to 8-bit
+                  input logic [2:0] F,
+                  input logic [1:0] R,
+                  output logic [7:0] LED,     // Updated to 8-bit (optional)
+                  output logic [7:0] Aval,    // Updated to 8-bit
+                                Bval,         // Updated to 8-bit
+                  output logic [6:0] AhexL, AhexU, BhexL, BhexU);
+
+    // local logic variables go here (update sizes as needed)
+    logic Reset_SH, LoadA_SH, LoadB_SH, Execute_SH;
+    logic [2:0] F_S;
+    logic [1:0] R_S;
+    logic Ld_A, Ld_B, newA, newB, opA, opB, bitA, bitB, Shift_En, F_A_B;
+    logic [7:0] A, B, Din_S;  // Updated to 8-bit
+
+    // Assign statements (update as necessary)
+    assign Aval = A;
+    assign Bval = B;
+    assign LED = {4'b0, Execute_SH, LoadA_SH, LoadB_SH, Reset_SH}; // Updated
+
+    // Instantiation of modules (update for 8-bit operation)
+    register_unit_8 reg_unit ( // Updated to 8-bit version
+        .Clk(Clk),
+        .Reset(Reset_SH),
+        .Ld_A,
+        .Ld_B,
+        .Shift_En,
+        .D(Din_S),
+        .A_In(newA),
+        .B_In(newB),
+        .A_out(opA),
+        .B_out(opB),
+        .A(A),
+        .B(B)
+    );
+    // Update other module instantiations as necessary
+
+    // Hex Drivers (need to handle upper and lower nibbles of 8-bit data)
+    HexDriver HexAL (.In0(A[3:0]), .Out0(AhexL));  // Lower nibble of A
+    HexDriver HexAU (.In0(A[7:4]), .Out0(AhexU));  // Upper nibble of A
+    HexDriver HexBL (.In0(B[3:0]), .Out0(BhexL));  // Lower nibble of B
+    HexDriver HexBU (.In0(B[7:4]), .Out0(BhexU));  // Upper nibble of B
+
+    // Synchronizers (update as necessary)
+    // ...
+
+endmodule
