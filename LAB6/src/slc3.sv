@@ -27,16 +27,11 @@ module slc3(
 );
 
 // Declaration of push button active high signals
-// logic Reset_ah, Continue_ah, Run_ah;
-// assign Reset_ah = ~Reset;
-// assign Continue_ah = ~Continue;
-// assign Run_ah = ~Run;
+logic Reset_ah, Continue_ah, Run_ah;
 
-
-logic CE_S, OE_S, WE_S;
-sync WE_sync (.Clk(Clk), .d(WE), .q(WE_S));
-sync OE_sync (.Clk(Clk), .d(OE), .q(OE_S));
-sync CE_sync (.Clk(Clk), .d(CE), .q(CE_S));
+assign Reset_ah = ~Reset;
+assign Continue_ah = ~Continue;
+assign Run_ah = ~Run;
 
 // Internal connections
 logic BEN;
@@ -54,16 +49,16 @@ logic [15:0] Data_from_SRAM, Data_to_SRAM;
 logic [3:0][3:0] hex_4;
 
 // For week 1, hexdrivers will display IR. Comment out these in week 2.
-// HexDriver hex_driver3 (IR[15:12], HEX3);
-// HexDriver hex_driver2 (IR[11:8], HEX2);
-// HexDriver hex_driver1 (IR[7:4], HEX1);
-// HexDriver hex_driver0 (IR[3:0], HEX0);
+HexDriver hex_driver3 (IR[15:12], HEX3);
+HexDriver hex_driver2 (IR[11:8], HEX2);
+HexDriver hex_driver1 (IR[7:4], HEX1);
+HexDriver hex_driver0 (IR[3:0], HEX0);
 
 // For week 2, hexdrivers will be mounted to Mem2IO
-HexDriver hex_driver3 (hex_4[3][3:0], HEX3);
-HexDriver hex_driver2 (hex_4[2][3:0], HEX2);
-HexDriver hex_driver1 (hex_4[1][3:0], HEX1);
-HexDriver hex_driver0 (hex_4[0][3:0], HEX0);
+// HexDriver hex_driver3 (hex_4[3][3:0], HEX3);
+// HexDriver hex_driver2 (hex_4[2][3:0], HEX2);
+// HexDriver hex_driver1 (hex_4[1][3:0], HEX1);
+// HexDriver hex_driver0 (hex_4[0][3:0], HEX0);
 
 // The other hex display will show PC for both weeks.
 HexDriver hex_driver7 (PC[15:12], HEX7);
@@ -75,32 +70,28 @@ HexDriver hex_driver4 (PC[3:0], HEX4);
 // MEM2IO will determine what gets put onto Data_CPU (which serves as a potential
 // input into MDR)
 assign ADDR = { 4'b00, MAR }; //Note, our external SRAM chip is 1Mx16, but address space is only 64Kx16
-// assign MIO_EN = ~OE;
-assign MIO_EN = ~OE_S;
+assign MIO_EN = ~OE;
 
 // You need to make your own datapath module and connect everything to the datapath
 // Be careful about whether Reset is active high or low
-datapath d0 (.*, .Reset(Reset));
+datapath d0 (/* Please fill in the signals.... */);
 
 // Our SRAM and I/O controller
 Mem2IO memory_subsystem(
-    .*, .Reset(Reset), .ADDR(ADDR), .Switches(S),
+    .*, .Reset(Reset_ah), .ADDR(ADDR), .Switches(S),
     .HEX0(hex_4[0][3:0]), .HEX1(hex_4[1][3:0]), .HEX2(hex_4[2][3:0]), .HEX3(hex_4[3][3:0]),
     .Data_from_CPU(MDR), .Data_to_CPU(MDR_In),
-    .Data_from_SRAM(Data_from_SRAM), .Data_to_SRAM(Data_to_SRAM),
-    // .CE(CE), .OE(OE), .WE(WE)
-    .CE(CE_S), .OE(OE_S), .WE(WE_S)
+    .Data_from_SRAM(Data_from_SRAM), .Data_to_SRAM(Data_to_SRAM)
 );
 
 // The tri-state buffer serves as the interface between Mem2IO and SRAM
 tristate #(.N(16)) tr0(
-    .Clk(Clk), .tristate_output_enable(~WE_S), .Data_write(Data_to_SRAM), .Data_read(Data_from_SRAM), .Data(Data)
-    // , .tristate_output_enable(~WE_S)
+    .Clk(Clk), .tristate_output_enable(~WE), .Data_write(Data_to_SRAM), .Data_read(Data_from_SRAM), .Data(Data)
 );
 
 // State machine and control signals
 ISDU state_controller(
-    .*, .Reset(Reset), .Run(Run), .Continue(Continue),
+    .*, .Reset(Reset_ah), .Run(Run_ah), .Continue(Continue_ah),
     .Opcode(IR[15:12]), .IR_5(IR[5]), .IR_11(IR[11]),
     .Mem_CE(CE), .Mem_UB(UB), .Mem_LB(LB), .Mem_OE(OE), .Mem_WE(WE)
 );

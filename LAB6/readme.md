@@ -8,5 +8,4 @@ So, we find some useful information online:
 
 - https://kttechnology.wordpress.com/2017/02/17/ece-385lab-6-slc3/
 - https://kttechnology.wordpress.com/2017/02/20/ece-385control-panel-tutorial/
-- NEW debugged Control Panel bin 
-- 
+- NEW debugged Control Panel, you can check the util.readme.md for more information on this

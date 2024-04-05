@@ -55,33 +55,30 @@ module ISDU (   input logic         Clk,
 									Mem_WE
 				);
 
-	enum logic [4:0] {  Halted, 
+	enum logic [3:0] {  Halted, 
 						PauseIR1, 
 						PauseIR2, 
-						S_18, 		// Start state
-						S_33_1, 	// MDR <= M
-						S_33_2, 	// MDR <- M
-						S_33_3,		// State 3 for sync
-						S_35, 		// IR <- MDR
-						S_32, 		// BEN <- nzp & IR[11:9]
-						S_01,		// ADD
-						S_05,		// AND
-						S_09,		// NOT
-						S_00, 		// BR1:
-						S_22,		// BR2: PC <- PC + off9
-						S_12,		// JMP: PC <- BaseR
-						S_04,		// JSR1: R7 <- PC
-						S_21,		// JSR2.1: PC <- PC + off11
-						S_20,		// JSR2.2: PC <- BaseR, not used
-						S_06,		// LDR1: MAR <- BaseR + off6
-						S_25_1,		// LDR2.1: MDR <- M[MAR]
-						S_25_2,		// LDR2.2: MDR <- M[MAR]
-						S_25_3, 	// State 3 for sync
-						S_27,		// LDR3: DR <- MDR
-						S_07,		// STR1: MAR <- BaseR + off6
-						S_23,		// STR2: MDR <- SR
-						S_16_1,		// STR3.1: M[MAR] <- MDR
-						S_16_2		// STR3.2: M[MAR] <- MDR
+						S_18, 
+						S_33_1, 
+						S_33_2, 
+						S_35, 
+						S_32, 
+						S_01,
+						S_05,
+						S_09,
+						S_06,
+						S_25_1,
+						S_25_2,
+						S_27,
+						S_07,
+						S_23,
+						S_16_1,
+						S_16_2,
+						S_04,
+						S_21,
+						S_12,
+						S_00,
+						S_22,
 						}   State, Next_state;   // Internal state logic
 		
 	always_ff @ (posedge Clk)
@@ -136,12 +133,10 @@ module ISDU (   input logic         Clk,
 			S_33_1 : 
 				Next_state = S_33_2;
 			S_33_2 : 
-				// Next_state = S_35;
-				Next_state = S_33_3;
-			S_33_3 :
 				Next_state = S_35;
 			S_35 : 
-				Next_state = S_32;
+				Next_state = PauseIR1;
+			// PauseIR1 and PauseIR2 are only for Week 1 such that TAs can see 
 			// the values in IR.
 			PauseIR1 : 
 				if (~Continue) 
@@ -155,70 +150,78 @@ module ISDU (   input logic         Clk,
 					Next_state = S_18;
 			S_32 : 
 				case (Opcode)
-					4'b0001 : 
-						Next_state = S_01; // ADD
-					4'b0101 :
-						Next_state = S_05; // AND
-					4'b1001 :
-						Next_state = S_09; // NOT
-					4'b0000 :
-						Next_state = S_00; // BR
-					4'b1100 :
-						Next_state = S_12; // JMP
-					4'b0100 :
-						Next_state = S_04; // JSR
-					4'b0110 :
-						Next_state = S_06; // LDR
-					4'b0111 :
-						Next_state = S_07; // STR
-					4'b1101 :
-						Next_state = PauseIR1; // Pause
+					4'b0001 : //ADD
+						Next_state = S_01;
+					4'b0101 : //AND
+						Next_state = S_05;
+					4'b1001 : //NOT
+						Next_state = S_09;
+					4'b0110 : //LDR
+						Next_state = S_06;
+					4'b0111 : //STR
+						Next_state = S_07;
+					4'b0100 : //JSR
+						Next_state = S_04;
+					4'b1100 : //JMP
+						Next_state = S_12;
+					4'b0000 : //BR
+						Next_state = S_00;
+					
+
+					// You need to finish the rest of opcodes.....
+
 					default : 
 						Next_state = S_18;
 				endcase
-			S_01 : // ADD
-				Next_state = S_18; 
-			S_05 : // AND
+
+			// ADD
+			S_01 : 
 				Next_state = S_18;
-			S_09 : // NOT
+			// AND
+			S_05 :
 				Next_state = S_18;
-			S_00 : // BR1
-				if (BEN)
-					Next_state = S_22;
-				else
-					Next_state = S_18;
-			S_22 : // BR2
-				Next_state = S_18;		
-			S_12 : // JMP
+			// NOT
+			S_09 :
 				Next_state = S_18;
-			S_04 : // JSR1
-				if (IR_11)
-					Next_state = S_21;
-				else
-					Next_state = S_20; // won't happen
-			S_21 : // JSR2.1
-				Next_state = S_18;
-			S_20 : // JSR2.2
-				Next_state = S_18;
-			S_06 : // LDR1
+			// LDR
+			S_06 :
 				Next_state = S_25_1;
-			S_25_1: // LDR2.1
+			S_25_1 :
 				Next_state = S_25_2;
-			S_25_2: // LDR2.2
-				// Next_state = S_27;
-				Next_state = S_25_3;
-			S_25_3:
+			S_25_2 :
 				Next_state = S_27;
-			S_27: // LDR3
+			S_27 :
 				Next_state = S_18;
-			S_07: // STR1
+			// STR
+			S_07 :
 				Next_state = S_23;
-			S_23: // STR2
+			S_23 :
 				Next_state = S_16_1;
-			S_16_1: // STR3.1
+			S_16_1 :
 				Next_state = S_16_2;
-			S_16_2: // STR3.2
+			S_16_2 :
 				Next_state = S_18;
+			// JSR
+			S_04 :
+				Next_state = S_21;
+			S_21 :
+				Next_state = S_18;
+			// JMP
+			S_12 :
+				Next_state = S_18;
+			// BR
+			S_00 :
+				if (BEN) 
+					Next_state = S_22;
+				else 
+					Next_state = S_18;
+			S_22 :
+				Next_state = S_18;
+
+
+
+			// You need to finish the rest of states.....
+
 			default : ;
 
 		endcase
@@ -230,19 +233,13 @@ module ISDU (   input logic         Clk,
 				begin 
 					GatePC = 1'b1;
 					LD_MAR = 1'b1;
-					PCMUX = 2'b00;	 // PC <- PC + 1
+					PCMUX = 2'b00;
 					LD_PC = 1'b1;
-					// Mem_OE = 1'b0;	 // For 3 states read
 				end
 			S_33_1 : 
 				Mem_OE = 1'b0;
 			S_33_2 : 
 				begin 
-					Mem_OE = 1'b0;
-					// LD_MDR = 1'b1;
-				end
-			S_33_3 :
-				begin
 					Mem_OE = 1'b0;
 					LD_MDR = 1'b1;
 				end
@@ -251,142 +248,128 @@ module ISDU (   input logic         Clk,
 					GateMDR = 1'b1;
 					LD_IR = 1'b1;
 				end
-			PauseIR1:
-				begin
-					LD_LED = 1'b1;
-				end 
-			PauseIR2:
-				begin
-					LD_LED = 1'b1;
-				end
-
+			PauseIR1: ;
+			PauseIR2: ;
 			S_32 : 
 				LD_BEN = 1'b1;
-			S_01 :  // ADD: DR <- SR1 + OP2
+
+			
+			S_01 : // ADD
 				begin 
-					SR2MUX = IR_5;	// ADD or ADDi
-					DRMUX = 1'b1; 	// DR<- IR[11:9]
-					SR1MUX = 1'b1; 	// SR1 <= IR[8:6]
+					SR2MUX = IR_5;
 					ALUK = 2'b00;
 					GateALU = 1'b1;
 					LD_REG = 1'b1;
-                    LD_CC = 1'b1;
+					// incomplete...
+					SR1MUX = 1'b1;
+					LD_CC = 1'b1;
+					DRMUX = 1'b0;
 				end
-			
-			S_05 : // AND: DR <- SR1 & OP2
-				begin
-					SR2MUX = IR_5;	// AND or ANDi
-					DRMUX = 1'b1; 	// DR<- IR[11:9]
-					SR1MUX = 1'b1; 	// SR1 <= IR[8:6]
+			S_05 : // AND
+				begin 
+					SR2MUX = IR_5;
+					SR1MUX = 1'b1;
 					ALUK = 2'b01;
 					GateALU = 1'b1;
 					LD_REG = 1'b1;
 					LD_CC = 1'b1;
+					DRMUX = 1'b0;
 				end
-
-			S_09 : // NOT: DR <- NOT(SR)
-				begin
-					DRMUX = 1'b1; 	// DR <- IR[11:9]
-					SR1MUX = 1'b1; 	// SR1 <- IR[8:6]
+			S_09 : // NOT
+				begin 
+					SR1MUX = 1'b1;
+					SR2MUX = 1'b0;
 					ALUK = 2'b10;
 					GateALU = 1'b1;
 					LD_REG = 1'b1;
 					LD_CC = 1'b1;
+					DRMUX = 1'b0;
 				end
-				
-			S_00 : // BR1: Evaluate BEN
-					;
-			S_22 : // BR2: PC <- PC + off9	
-				begin
-					ADDR1MUX = 1'b1; 	// PC
-					ADDR2MUX = 2'b01;	// SEXT 9
-					PCMUX = 2'b10;		// From Calc
-					LD_PC = 1'b1;
+
+			S_06 : // LDR
+				begin 
+					SR1MUX = 1'b1;
+					ADDR2MUX = 2'b01;
+					ADDR1MUX = 1'b1;
+					LD_MAR = 1'b1;
+					GateMARMUX = 1'b1;
 				end
-			
-			S_12 : // JMP: PC <- BaseR
-				begin
-					SR1MUX = 1'b1;		// BaseR <- IR[8:6]
-					ADDR1MUX = 1'b0;	// BaseR
-					ADDR2MUX = 2'b11;	// 0
-					PCMUX = 2'b10;		// From Calc
-					LD_PC = 1'b1;
+			S_25_1 :
+				begin 
+					Mem_OE = 1'b0;
 				end
-			
-			S_04 : // JSR1: R7 <- PC
+			S_25_2 :
 				begin
-					DRMUX = 1'b0;		// 111(R7)
+					Mem_OE = 1'b0;
+					LD_MDR = 1'b1;
+				end
+			S_27 :
+				begin
+					DRMUX = 1'b0;
+					LD_REG = 1'b1;
+					LD_CC = 1'b1;
+					GateMDR = 1'b1;
+				end
+
+			S_07 : //STR
+				begin
+					SR1MUX = 1'b1;
+					ADDR2MUX = 2'b01;
+					ADDR1MUX = 1'b1;
+					GateMARMUX = 1'b1;
+					LD_MAR = 1'b1;
+				end
+			S_23 :
+				begin
+					ALUK = 2'b11;
+					GateALU = 1'b1;
+					SR1MUX = 1'b0;
+					LD_MDR = 1'b1;
+				end
+			S_16_1 :
+				begin
+					Mem_OE = 1'b1;
+					Mem_WE = 1'b0;
+				end
+			S_16_2 :
+				begin
+					Mem_WE = 1'b0;
+					Mem_OE = 1'b1;
+				end
+
+
+			S_04 : // JSR
+				begin
+					DRMUX = IR_11;
 					GatePC = 1'b1;
 					LD_REG = 1'b1;
 				end
-			
-			S_21 : // JSR2.1: PC <- PC + off11
+			S_21 :
 				begin
-					ADDR1MUX = 1'b1;	// PC
-					ADDR2MUX = 2'b00; 	// SEXT 11
-					PCMUX = 2'b10;		// From Calc
+					ADDR2MUX = 2'b11;
+					ADDR1MUX = 1'b0;
+					PCMUX = 2'b10;
 					LD_PC = 1'b1;
 				end
-			
-			S_20 : // JSR2.2: PC <- BaseR, not used
-					;
-			
-			S_06 : // LDR1: MAR <- BaseR + off6
+			S_12 : //JMP
 				begin
-					SR1MUX = 1'b1;		// BaseR <- IR[8:6]
-					ADDR1MUX = 1'b0;	// BaseR
-					ADDR2MUX = 2'b10;	// SEXT 6
-					GateMARMUX = 1'b1;
-					LD_MAR = 1'b1;
-					// Mem_OE = 1'b0;
+					ADDR1MUX = 1'b1;
+					ADDR2MUX = 2'b00;
+					SR1MUX = 1'b1;
+					PCMUX = 2'b10;
+					LD_PC = 1'b1;
 				end
-			S_25_1: // LDR2.1: MDR <- M[MAR]
+
+			S_00 : ; //BR
+			S_22 :
 				begin
-					Mem_OE = 1'b0;
+					ADDR2MUX = 2'b10;
+					ADDR1MUX = 1'b0;
+					PCMUX = 2'b10;
+					LD_PC = 1'b1;
 				end
-			S_25_2: // LDR2.2: MDR <= M[MAR]
-				begin
-					Mem_OE = 1'b0;
-					// LD_MDR = 1'b1;
-				end
-			S_25_3:
-				begin
-					Mem_OE = 1'b0;
-					LD_MDR = 1'b1;
-				end
-			S_27 : // LDR3: DR <- MDR
-				begin
-					DRMUX = 1'b1;	// DR <- IR[11:9]
-					GateMDR = 1'b1;
-					LD_REG = 1'b1;
-					LD_CC = 1'b1;
-				end
-			
-			S_07 : // STR1: MAR <- BaseR + off6
-				begin
-					SR1MUX = 1'b1;		// BaseR <- IR[8:6]
-					ADDR1MUX = 1'b0;	// BaseR
-					ADDR2MUX = 2'b10;	// SEXT 6
-					GateMARMUX = 1'b1;
-					LD_MAR = 1'b1;
-				end
-			S_23 : // STR2: MDR <- SR
-				begin
-					SR1MUX = 1'b0; 		// SR <- IR[11:9]
-					ADDR1MUX = 1'b0;	// SR
-					ADDR2MUX = 2'b11;	// 0
-					GateMARMUX = 1'b1;
-					LD_MDR = 1'b1;
-				end
-			S_16_1: // M[MAR] <- MDR
-					// TODO, write may need 3 cycles?
-				begin
-					Mem_WE = 1'b0;
-				end
-			S_16_2:	// M[MAR] <- MDR
-				begin
-					Mem_WE = 1'b0;
-				end
+
+			// You need to finish the rest of states.....
 
 			default : ;
 		endcase
