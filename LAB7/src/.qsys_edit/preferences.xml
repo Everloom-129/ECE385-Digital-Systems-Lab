@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable filter="lab7_spc.clk" showClockDomains="1" showResetDomains="0">
+  <columns>
+   <connections preferredWidth="143" />
+   <irq preferredWidth="34" />
+   <name preferredWidth="188" />
+   <autoexport visible="0" />
+  </columns>
+ </systemtable>
+ <library
+   expandedCategories="Library/Processors and Peripherals,Library,Project,Library/Processors and Peripherals/Embedded Processors" />
+ <window width="1742" height="1038" x="0" y="0" />
+</preferences>
