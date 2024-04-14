@@ -1,0 +1,7 @@
+	component lab7_spc is
+		port (
+			clk_clk                          : in  std_logic                    := 'X'; -- clk
+			pio_0_external_connection_export : out std_logic_vector(7 downto 0)         -- export
+		);
+	end component lab7_spc;
+
