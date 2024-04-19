@@ -16,6 +16,7 @@
 module lab8( input               CLOCK_50,
              input        [3:0]  KEY,          //bit 0 is set up as Reset
              output logic [6:0]  HEX0, HEX1,
+				 output logic [7:0]  LEDG,
              // VGA Interface 
              output logic [7:0]  VGA_R,        //VGA Red
                                  VGA_G,        //VGA Green
@@ -57,6 +58,10 @@ module lab8( input               CLOCK_50,
     logic [1:0] hpi_addr;
     logic [15:0] hpi_data_in, hpi_data_out;
     logic hpi_r, hpi_w, hpi_cs, hpi_reset;
+	 
+	 // new middle valiables
+	 logic [9:0] DrawX,DrawY;
+	 logic is_ball;
     
     // Interface between NIOS II and EZ-OTG chip
     hpi_io_intf hpi_io_inst(
@@ -80,7 +85,7 @@ module lab8( input               CLOCK_50,
     );
      
      // You need to make sure that the port names here match the ports in Qsys-generated codes.
-     nios_system nios_system(
+     lab8_soc nios_system(
                              .clk_clk(Clk),         
                              .reset_reset_n(1'b1),    // Never reset NIOS
                              .sdram_wire_addr(DRAM_ADDR), 
@@ -108,12 +113,12 @@ module lab8( input               CLOCK_50,
     vga_clk vga_clk_instance(.inclk0(Clk), .c0(VGA_CLK));
     
     // TODO: Fill in the connections for the rest of the modules 
-    VGA_controller vga_controller_instance();
+    VGA_controller vga_controller_instance(.Clk, .Reset(Reset_h),.*);
     
     // Which signal should be frame_clk?
-    ball ball_instance();
-    
-    color_mapper color_instance();
+    ball ball_instance(.Clk, .Reset(Reset_h), .frame_clk(VGA_VS), .DrawX, .DrawY, .keycode, .is_ball);
+     
+    color_mapper color_instance(.*);
     
     // Display keycode on hex display
     HexDriver hex_inst_0 (keycode[3:0], HEX0);
@@ -139,4 +144,27 @@ module lab8( input               CLOCK_50,
         allowing for more complex key combinations without conflict.
 
     **************************************************************************************/
+      always_comb
+		 begin
+		 // default case
+		 LEDG = 8'b0000;
+		  case(keycode)
+			  8'h04: begin
+				  LEDG = 8'b0010;
+				 end
+			  8'h07: begin
+				  LEDG = 8'b0001;
+				 end
+			  8'h1a: begin
+				  LEDG = 8'b1000;
+				 end
+			  8'h16: begin
+				  LEDG = 8'b0100;
+				 end
+		  endcase
+		 end
+	 
+	 
+	 
+	 
 endmodule

@@ -83,6 +83,31 @@ module  ball ( input         Clk,                // 50 MHz clock
                 Ball_Y_Motion_in = Ball_Y_Step;
             // TODO: Add other boundary detections and handle keypress here.
         
+			else 
+					case(keycode)
+						//A
+						8'h04: begin
+									Ball_X_Motion_in = (~(Ball_X_Step) + 1'b1);
+								end
+								
+						//D
+						8'h07: begin
+									Ball_X_Motion_in = Ball_X_Step;
+								end
+						
+						//W
+						8'h1a: begin
+									Ball_Y_Motion_in = (~(Ball_Y_Step) + 1'b1);
+								end
+						
+						//S
+						8'h16: begin
+									Ball_Y_Motion_in = Ball_Y_Step;
+								end
+						default:
+							begin
+							end
+					endcase
         
             // Update the ball's position with its motion
             Ball_X_Pos_in = Ball_X_Pos + Ball_X_Motion;
