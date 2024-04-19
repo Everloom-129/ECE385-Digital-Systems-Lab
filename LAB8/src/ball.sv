@@ -90,15 +90,30 @@ module  ball ( input         Clk,                // 50 MHz clock
         end
         
         /**************************************************************************************
-            ATTENTION! Please answer the following quesiton in your lab report! Points will be allocated for the answers!
+            ATTENTION! Please answer the following quesiton in your lab report! 
+            Points will be allocated for the answers!
             Hidden Question #2/2:
                Notice that Ball_Y_Pos is updated using Ball_Y_Motion. 
               Will the new value of Ball_Y_Motion be used when Ball_Y_Pos is updated, or the old? 
               What is the difference between writing
                 "Ball_Y_Pos_in = Ball_Y_Pos + Ball_Y_Motion;" and 
                 "Ball_Y_Pos_in = Ball_Y_Pos + Ball_Y_Motion_in;"?
-              How will this impact behavior of the ball during a bounce, and how might that interact with a response to a keypress?
+              How will this impact behavior of the ball during a bounce, 
+              and how might that interact with a response to a keypress?
               Give an answer in your Post-Lab.
+            Answer:
+            When updating Ball_Y_Pos, the old value of Ball_Y_Motion is used due to parallel assignments.
+            -   If we use Ball_Y_Motion, the Y position in the current clock cycle is determined 
+            by the old Y position and the old motion in the Y direction. 
+            This will not be influenced by previous key presses or whether the ball is at the boundary.
+            -   If we use Ball_Y_Motion_in, the Y position in the current clock cycle is determined 
+            by the old Y position, previous key press actions, and the boundary condition.
+            Using Ball_Y_Motion_in results in a quicker response of the ball. 
+            When the ball reaches the wall, it will bounce back immediately, 
+            and when a key press occurs, the direction will change immediately. 
+            Using Ball_Y_Motion does not achieve this as the reaction of the picture is one frame 
+            slower than the code.
+
         **************************************************************************************/
     end
     

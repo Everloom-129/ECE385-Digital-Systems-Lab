@@ -19,21 +19,28 @@ void IO_init(void)
 
 void IO_write(alt_u8 Address, alt_u16 Data)
 {
-//*************************************************************************//
-//									TASK								   //
-//*************************************************************************//
-//							Write this function							   //
-//*************************************************************************//
+    *otg_hpi_address = Address;  // Set the address
+    *otg_hpi_data = Data;        // Set the data to be written
+
+    *otg_hpi_cs = 0;             // Assert chip select
+    *otg_hpi_w = 0;              // Assert write signal
+    // Wait loop or delay here if needed
+    *otg_hpi_w = 1;              // De-assert write signal
+    *otg_hpi_cs = 1;             // De-assert chip select
 }
+
 
 alt_u16 IO_read(alt_u8 Address)
 {
-	alt_u16 temp;
-//*************************************************************************//
-//									TASK								   //
-//*************************************************************************//
-//							Write this function							   //
-//*************************************************************************//
-	//printf("%x\n",temp);
-	return temp;
+    *otg_hpi_address = Address;  // Set the address
+
+    *otg_hpi_cs = 0;             // Assert chip select
+    *otg_hpi_r = 0;              // Assert read signal
+    // Wait loop or delay here if needed
+    alt_u16 temp = *otg_hpi_data; // Read the data
+    *otg_hpi_r = 1;              // De-assert read signal
+    *otg_hpi_cs = 1;             // De-assert chip select
+	printf("%x\n",temp);
+
+    return temp;
 }
