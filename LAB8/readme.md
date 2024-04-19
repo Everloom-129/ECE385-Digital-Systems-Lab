@@ -2,6 +2,12 @@
 
 > In Lab 8, you'll interface a keyboard and a monitor with the DE2 board using USB and VGA. This lab involves integration of software and hardware components, focusing on interactive VGA display control using keyboard inputs. Here's how you can approach this lab step by step:
 
+
+
+***Notice our lab code is messy because we developed the lab 8 and 9 directly on our lab 7 code. So the git repo does not include much useful information. Sorry for the readiness inconvenience. --- Jie Wang*** 
+
+
+
 ### Step 1: Platform Designer Setup
 - **Objective:** Integrate the NIOS II Processor with the CY7C67200 USB chip.
 - **Actions:**
