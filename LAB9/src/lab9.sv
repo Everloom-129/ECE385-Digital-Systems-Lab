@@ -72,7 +72,7 @@ module lab9( input               CLOCK_50,
 					.vga_port_blank (VGA_BLANK_N),
 					.vga_port_sync (VGA_SYNC_N)
     );
-	 
+
 	 assign VGA_R[3:0] = 4'h0;
 	 assign VGA_G[3:0] = 4'h0;
 	 assign VGA_B[3:0] = 4'h0;

@@ -36,6 +36,16 @@ void textVGADrawColorText(char* str, int x, int y, alt_u8 background, alt_u8 for
 void setColorPalette (alt_u8 color, alt_u8 red, alt_u8 green, alt_u8 blue)
 {
 	//fill in this function to set the color palette starting at offset 0x0000 2000 (from base)
+	if(color & 1)
+	{
+		vga_ctrl->Palette[color >> 1] &= (alt_u32)0xFE001FFF;
+		vga_ctrl->Palette[color >> 1] |= ((alt_u32)blue << 13) | ((alt_u32)green << 17) | ((alt_u32)red << 21);
+	}
+	else
+	{
+		vga_ctrl->Palette[color >> 1] &= (alt_u32)0xFFFFE001;
+		vga_ctrl->Palette[color >> 1] |= ((alt_u32)blue << 1) | ((alt_u32)green << 5) | ((alt_u32)red << 9);
+	}
 }
 
 

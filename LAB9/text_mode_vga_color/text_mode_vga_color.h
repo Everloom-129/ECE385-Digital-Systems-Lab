@@ -19,6 +19,8 @@
 struct TEXT_VGA_STRUCT {
 	alt_u8 VRAM [ROWS*COLUMNS*2]; //Week 2 - extended VRAM
 	//modify this by adding const bytes to skip to palette, or manually compute palette
+	alt_u8 reserved0 [3392]; // 0x12C0 - 0x1FFF
+	alt_u32 Palette [8]; // 0x2000 - 0x201F
 };
 
 struct COLOR{
@@ -30,7 +32,7 @@ struct COLOR{
 
 
 //you may have to change this line depending on your platform designer
-static volatile struct TEXT_VGA_STRUCT* vga_ctrl = VGA_TEXT_MODE_CONTROLLER_0_BASE;
+static volatile struct TEXT_VGA_STRUCT* vga_ctrl = 0xC000;
 
 //CGA colors with names
 static struct COLOR colors[]={
