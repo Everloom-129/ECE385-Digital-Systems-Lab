@@ -4,7 +4,7 @@
 
 
 
-***Notice our lab code is messy because we developed the lab 8 and 9 directly on our lab 7 code. So the git repo does not include much useful information. Sorry for the readiness inconvenience. --- Jie Wang*** 
+***Notice our lab code is messy because we developed the lab 8 and 9 directly on our lab 7 code. So the git repo does not include much useful information. Sorry for the readiness inconvenience.***
 
 
 
