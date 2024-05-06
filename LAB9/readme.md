@@ -1,5 +1,7 @@
 ## Lab 9 Guide: VGA Text Mode Controller with Avalon-MM Interface
 
+*Code of lab 9 is too messy so we don't include them here.*
+
 > Here's a step-by-step guide to help you navigate through Lab 9 of ECE 385, focusing on the development of a text mode VGA controller using an Avalon-MM interface. 
 
 ### Step 1: Understand the Lab Objectives and Requirements
