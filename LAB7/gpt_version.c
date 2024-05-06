@@ -1,5 +1,8 @@
 #include <stdint.h>
 
+// This is a GPT fancy version for the blinking codes, but it does not work
+// Take care if u want AI to help you !
+
 // Definitions for easier handling of peripherals
 #define LED_PIO_BASE       0x70 // Base address for the LED PIO
 #define SWITCH_PIO_BASE    0x60 // Base address for the Switch PIO
