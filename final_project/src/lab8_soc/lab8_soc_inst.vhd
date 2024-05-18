@@ -1,6 +1,7 @@
 	component lab8_soc is
 		port (
 			clk_clk                : in    std_logic                     := 'X';             -- clk
+			keycode_export         : out   std_logic_vector(7 downto 0);                     -- export
 			otg_hpi_address_export : out   std_logic_vector(1 downto 0);                     -- export
 			otg_hpi_cs_export      : out   std_logic;                                        -- export
 			otg_hpi_data_in_port   : in    std_logic_vector(15 downto 0) := (others => 'X'); -- in_port
@@ -25,6 +26,7 @@
 	u0 : component lab8_soc
 		port map (
 			clk_clk                => CONNECTED_TO_clk_clk,                --             clk.clk
+			keycode_export         => CONNECTED_TO_keycode_export,         --         keycode.export
 			otg_hpi_address_export => CONNECTED_TO_otg_hpi_address_export, -- otg_hpi_address.export
 			otg_hpi_cs_export      => CONNECTED_TO_otg_hpi_cs_export,      --      otg_hpi_cs.export
 			otg_hpi_data_in_port   => CONNECTED_TO_otg_hpi_data_in_port,   --    otg_hpi_data.in_port

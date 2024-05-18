@@ -117,7 +117,7 @@ module lab8( input               CLOCK_50,
     
     // Which signal should be frame_clk?
     ball ball_instance(.Clk, .Reset(Reset_h), .frame_clk(VGA_VS), .DrawX, .DrawY, .keycode, .is_ball);
-     
+    
     color_mapper color_instance(.*);
     
     // Display keycode on hex display
@@ -125,26 +125,12 @@ module lab8( input               CLOCK_50,
     HexDriver hex_inst_1 (keycode[7:4], HEX1);
     
     /**************************************************************************************
-        ATTENTION! Please answer the following quesiton in your lab report! 
-        Points will be allocated for the answers!
+        ATTENTION! Please answer the following quesiton in your lab report! Points will be allocated for the answers!
         Hidden Question #1/2:
         What are the advantages and/or disadvantages of using a USB interface over PS/2 interface to
              connect to the keyboard? List any two.  Give an answer in your Post-Lab.
-
-        Answer: 
-        Hot-swapping Capability: USB interfaces support hot swapping, allowing external 
-        devices to be used immediately upon connection without the need to restart the computer.
-
-        Limitations on Simultaneous Key Presses: With a USB interface, 
-        only up to six keys can be pressed simultaneously 
-        because only 8 bytes of data can be transferred in one data packet. 
-        This means a USB keyboard can only register the states of six keys at the same time, 
-        potentially leading to "key rollover" issues. 
-        In contrast, the PS/2 interface does not have this limitation, 
-        allowing for more complex key combinations without conflict.
-
     **************************************************************************************/
-      always_comb
+	  always_comb
 		 begin
 		 // default case
 		 LEDG = 8'b0000;

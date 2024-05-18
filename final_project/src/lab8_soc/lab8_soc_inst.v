@@ -1,5 +1,6 @@
 	lab8_soc u0 (
 		.clk_clk                (<connected-to-clk_clk>),                //             clk.clk
+		.keycode_export         (<connected-to-keycode_export>),         //         keycode.export
 		.otg_hpi_address_export (<connected-to-otg_hpi_address_export>), // otg_hpi_address.export
 		.otg_hpi_cs_export      (<connected-to-otg_hpi_cs_export>),      //      otg_hpi_cs.export
 		.otg_hpi_data_in_port   (<connected-to-otg_hpi_data_in_port>),   //    otg_hpi_data.in_port

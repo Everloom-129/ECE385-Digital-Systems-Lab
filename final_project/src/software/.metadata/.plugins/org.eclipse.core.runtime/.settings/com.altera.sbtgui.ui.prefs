@@ -1,4 +1,4 @@
 eclipse.preferences.version=1
-newSoftwareExampleWizardPage.defaultLocation=D\:\\intelFPGA_lite\\GYH-WORK\\Labs_and_reports\\LAB8\\lab8new\\LAB8\\software\\temp2
-newSoftwareExampleWizardPage.sopcinfoFile=D\:\\intelFPGA_lite\\GYH-WORK\\Labs_and_reports\\LAB8\\lab8new\\LAB8\\lab8_soc.sopcinfo
-newSoftwareExampleWizardPage2.newBspLocation=D\:\\intelFPGA_lite\\GYH-WORK\\Labs_and_reports\\LAB8\\lab8new\\LAB8\\software\\temp2_bsp
+newSoftwareExampleWizardPage.defaultLocation=D\:\\intelFPGA_lite\\ECE385-Digital-Systems-Lab\\final_project\\src\\software\\T1
+newSoftwareExampleWizardPage.sopcinfoFile=D\:\\intelFPGA_lite\\ECE385-Digital-Systems-Lab\\final_project\\src\\lab8_soc.sopcinfo
+newSoftwareExampleWizardPage2.newBspLocation=D\:\\intelFPGA_lite\\ECE385-Digital-Systems-Lab\\final_project\\src\\software\\T1_bsp
