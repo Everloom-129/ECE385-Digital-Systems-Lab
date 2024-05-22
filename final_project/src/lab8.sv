@@ -1,4 +1,8 @@
 //-------------------------------------------------------------------------
+//      Tetris.sv 
+//      Jie Wang & Shitian Yang
+//      Spring 2024
+//
 //      lab8.sv                                                          --
 //      Christine Chen                                                   --
 //      Fall 2014                                                        --
@@ -8,7 +12,7 @@
 //                                                                       --
 //      Fall 2017 Distribution                                           --
 //                                                                       --
-//      For use with ECE 385 Lab 8                                       --
+//      Originally ECE 385 Lab 8                                       --
 //      UIUC ECE Department                                              --
 //-------------------------------------------------------------------------
 
@@ -124,12 +128,6 @@ module lab8( input               CLOCK_50,
     HexDriver hex_inst_0 (keycode[3:0], HEX0);
     HexDriver hex_inst_1 (keycode[7:4], HEX1);
     
-    /**************************************************************************************
-        ATTENTION! Please answer the following quesiton in your lab report! Points will be allocated for the answers!
-        Hidden Question #1/2:
-        What are the advantages and/or disadvantages of using a USB interface over PS/2 interface to
-             connect to the keyboard? List any two.  Give an answer in your Post-Lab.
-    **************************************************************************************/
 	  always_comb
 		 begin
 		 // default case
