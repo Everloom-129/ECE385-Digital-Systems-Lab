@@ -13,171 +13,12 @@
 //    UIUC ECE Department                                                --
 //-------------------------------------------------------------------------
 
-// module  ball ( input         Clk,                // 50 MHz clock
-//                              Reset,              // Active-high reset signal
-//                              frame_clk,          // The clock indicating a new frame (~60Hz)
-//                input [9:0]   DrawX, DrawY,       // Current pixel coordinates
-// 					input [7:0]	  keycode,
-//                output logic  is_ball             // Whether current pixel belongs to ball or background
-//               );
-    
-//     parameter [9:0] Ball_X_Center = 10'd320;  // Center position on the X axis
-//     parameter [9:0] Ball_Y_Center = 10'd240;  // Center position on the Y axis
-//     parameter [9:0] Ball_X_Min = 10'd0;       // Leftmost point on the X axis 0
-//     parameter [9:0] Ball_X_Max = 10'd639;     // Rightmost point on the X axis 639
-//     parameter [9:0] Ball_Y_Min = 10'd0;       // Topmost point on the Y axis 0
-//     parameter [9:0] Ball_Y_Max = 10'd479;     // Bottommost point on the Y axis 479
-//     parameter [9:0] Ball_X_Step = 10'd1;      // Step size on the X axis
-//     parameter [9:0] Ball_Y_Step = 10'd1;      // Step size on the Y axis
-//     parameter [9:0] Ball_Size = 10'd40;        // Ball size
-    
-//     logic [9:0] Ball_X_Pos, Ball_X_Motion, Ball_Y_Pos, Ball_Y_Motion;
-//     logic [9:0] Ball_X_Pos_in, Ball_X_Motion_in, Ball_Y_Pos_in, Ball_Y_Motion_in;
-    
-//     //////// Do not modify the always_ff blocks. ////////
-//     // Detect rising edge of frame_clk
-//     logic frame_clk_delayed, frame_clk_rising_edge;
-
-
-//     logic [12:0] frame_clk_rising_edge_count=13'b0;
-
-//     always_ff @ (posedge Clk) begin
-//         frame_clk_delayed <= frame_clk;
-//         frame_clk_rising_edge <= (frame_clk == 1'b1) && (frame_clk_delayed == 1'b0);
-        
-//     end
-
-//     always_ff @ (posedge frame_clk_rising_edge) begin
-//         frame_clk_rising_edge_count+=1'b1;
-//     end
-//     // Update registers
-//     always_ff @ (posedge Clk)
-//     begin
-//         if (Reset)
-//         begin
-//             Ball_X_Pos <= Ball_X_Center;
-//             Ball_Y_Pos <= Ball_Y_Center;
-//             Ball_X_Motion <= 10'd0;
-//             Ball_Y_Motion <= Ball_Y_Step;
-//         end
-//         else
-//         begin
-//             Ball_X_Pos <= Ball_X_Pos_in;
-//             Ball_Y_Pos <= Ball_Y_Pos_in;
-//             Ball_X_Motion <= Ball_X_Motion_in;
-//             Ball_Y_Motion <= Ball_Y_Motion_in;
-//         end
-//     end
-//     //////// Do not modify the always_ff blocks. ////////
-    
-//     // You need to modify always_comb block.
-//     always_comb
-//     begin
-//         // By default, keep motion and position unchanged
-//         Ball_X_Pos_in = Ball_X_Pos;
-//         Ball_Y_Pos_in = Ball_Y_Pos;
-//         Ball_X_Motion_in = Ball_X_Motion;
-//         Ball_Y_Motion_in = Ball_Y_Motion;
-        
-//         // Update position and motion only at rising edge of frame clock
-//         if(frame_clk_rising_edge_count[4:0]==5'b10000 && frame_clk_rising_edge) 
-//         begin
-//             Ball_Y_Motion_in=10'd40;
-//             Ball_X_Motion_in=10'd0;
-//             if( Ball_Y_Pos + Ball_Size >= Ball_Y_Max )  // Ball is at the bottom edge, BOUNCE!
-//                 Ball_Y_Motion_in = 0;  
-//             else
-//                 case(keycode)
-//                 // W
-//                 10'd26:
-//                     begin
-//                     //Ball_Y_Motion_in = (~(Ball_Y_Step) + 1'b1);
-//                     //Ball_X_Motion_in = 1'b0;
-//                     end
-//                 // S
-//                 10'd22:
-//                     begin
-//                     Ball_Y_Motion_in = 10'd18;
-//                     Ball_X_Motion_in = 1'b0;
-//                     end
-
-//                 // A
-//                 10'd4:
-//                     begin
-//                     Ball_X_Motion_in = (~(10'd9)+1'b1);
-//                     Ball_Y_Motion_in = 1'b0;
-//                     end
-
-//                 // D
-//                 10'd7:
-//                     begin
-//                     Ball_X_Motion_in = 10'd9;
-//                     Ball_Y_Motion_in = 1'b0;
-//                     end
-
-//                 endcase
-
-
-//             // Be careful when using comparators with "logic" datatype because compiler treats 
-//             //   both sides of the operator as UNSIGNED numbers.
-//             // e.g. Ball_Y_Pos - Ball_Size <= Ball_Y_Min 
-//             // If Ball_Y_Pos is 0, then Ball_Y_Pos - Ball_Size will not be -4, but rather a large positive number.
-//             // if( Ball_Y_Pos + Ball_Size >= Ball_Y_Max )  // Ball is at the bottom edge, BOUNCE!
-//             //     Ball_Y_Motion_in = (~(Ball_Y_Step) + 1'b1);  // 2's complement.  
-//             // if ( Ball_Y_Pos + Ball_Size>= Ball_Y_Max  )  // Ball is at the bottom edge, BOUNCE!
-//             //     Ball_Y_Motion_in = 1'b0;
-//             // // TODO: Add other boundary detections and handle keypress here.
-//             // if(Ball_X_Pos + Ball_Size >= Ball_X_Max) // Ball is at the right edge, BOUNCE!
-//             //     Ball_X_Motion_in = 1'b0;
-//             // else if (Ball_X_Pos <= Ball_X_Min + Ball_Size) // Ball is at the left edge, BOUNCE!
-//             //     Ball_X_Motion_in = 1'b0;
-        
-        
-        
-//             // Update the ball's position with its motion
-//             Ball_X_Pos_in = Ball_X_Pos + Ball_X_Motion;
-//             Ball_Y_Pos_in = Ball_Y_Pos + Ball_Y_Motion;
-//         end
-//     end
-        
-//         /**************************************************************************************
-//             ATTENTION! Please answer the following quesiton in your lab report! Points will be allocated for the answers!
-//             Hidden Question #2/2:
-//                Notice that Ball_Y_Pos is updated using Ball_Y_Motion. 
-//               Will the new value of Ball_Y_Motion be used when Ball_Y_Pos is updated, or the old? 
-//               What is the difference between writing
-//                 "Ball_Y_Pos_in = Ball_Y_Pos + Ball_Y_Motion;" and 
-//                 "Ball_Y_Pos_in = Ball_Y_Pos + Ball_Y_Motion_in;"?
-//               How will this impact behavior of the ball during a bounce, and how might that interact with a response to a keypress?
-//               Give an answer in your Post-Lab.
-//         **************************************************************************************/
-
-    
-//     // Compute whether the pixel corresponds to ball or background
-//     /* Since the multiplicants are required to be signed, we have to first cast them
-//        from logic to int (signed by default) before they are multiplied. */
-//     int DistX, DistY, Size;
-//     assign DistX = DrawX - Ball_X_Pos;
-//     assign DistY = DrawY - Ball_Y_Pos;
-//     assign Size = Ball_Size;
-//     always_comb begin
-//         if ( DistX*DistX<=Size*Size && DistY*DistY<=Size*Size)
-//             is_ball = 1'b1;
-//         else
-//             is_ball = 1'b0;
-//         /* The ball's (pixelated) circle is generated using the standard circle formula.  Note that while 
-//            the single line is quite powerful descriptively, it causes the synthesis tool to use up three
-//            of the 12 available multipliers on the chip! */
-//     end
-    
-// endmodule
-// https://prod.liveshare.vsengsaas.visualstudio.com/join?69649CD7D382CB16FC24EDA1F395EB43779A
 module  ball ( input         Clk,                // 50 MHz clock
                              Reset,              // Active-high reset signal
                              frame_clk,          // The clock indicating a new frame (~60Hz)
                input [9:0]   DrawX, DrawY,       // Current pixel coordinates
 					input [7:0]	  keycode,
-               output logic  is_ball             // Whether current pixel belongs to ball or background
+               output logic [4:0] is_ball             // Whether current pixel belongs to ball or background
               );
     
     // parameter [9:0] Ball_X_Center = 10'd320;  // Center position on the X axis
@@ -199,21 +40,27 @@ module  ball ( input         Clk,                // 50 MHz clock
     wire [5:0] block_x_try_choose [24:0];
     wire [5:0] block_y_try_choose [24:0];
 
-    wire [5:0] block_x_try_rotation [24:0];
-    wire [5:0] block_y_try_rotation [24:0];
+
 
     logic [1:0] left_right_shift;
     logic [1:0] up_down_shift;
 
     logic clear_memory;
     logic enable_update_moving_block_ground;
-    logic enable_rotation;
+    
 
     choose_block block1(.Clk(Clk),.block_type(block_type),.enable_choose(enable_choose),.block_x(block_x_try_choose),.block_y(block_y_try_choose));
     //up_down_shift_block up_down_shift_block1(.block_x(block_x),.block_y(block_y),.up_down_shift(up_down_shift),.block_try_x(block_x),.block_try_y(block_y));
     memory_block_on_moving_block_ground memory_block_on_moving_block_ground1(.Clk(Clk),.write_enable(enable_update_moving_block_ground),.block_x(block_x),.block_y(block_y),.moving_block_ground(mbg_wire));
 
+    ///////
+    logic [4:0] is_ball0_color_order, is_ball1_color_order, is_ball2_color_order, is_ball3_color_order;
+    assign is_ball0_color_order = 5'b00001;
+    assign is_ball1_color_order = 5'b00010;
+    assign is_ball2_color_order = 5'b00011;
+    assign is_ball3_color_order = 5'b00100;
 
+    ///////
 
     //////////////
     logic enable_update_score_ground;
@@ -224,7 +71,8 @@ module  ball ( input         Clk,                // 50 MHz clock
     reg [39:0] score_ground3 [59:0];  // Memory of moving blocks, 30 rows each 20 bits wide
     wire [39:0] score_ground_wire3 [59:0];       // Wire for inout connection
     logic [5:0] init_x_1, init_y_1, init_x_2, init_y_2, init_x_3, init_y_3;
-    logic [5:0] block_x_1 [33:0], block_y_1 [33:0], block_x_2 [33:0], block_y_2 [33:0], block_x_3 [33:0], block_y_3 [33:0];
+    reg [5:0] block_x_1 [33:0], block_y_1 [33:0], block_x_2 [33:0], block_y_2 [33:0], block_x_3 [33:0], block_y_3 [33:0];
+    wire [5:0] block_x_1_try_choose [33:0], block_y_1_try_choose [33:0], block_x_2_try_choose [33:0], block_y_2_try_choose [33:0], block_x_3_try_choose [33:0], block_y_3_try_choose [33:0];
 
     assign init_x_1 = 6'd10;
     assign init_y_1 = 6'd20;
@@ -234,35 +82,72 @@ module  ball ( input         Clk,                // 50 MHz clock
     assign init_y_3 = 6'd20;
 
     logic [5:0] num1, num2, num3;
-    assign num1 = 6'd3;
+    //assign num1 = 6'd0;
     assign num2 = 6'd8;
     assign num3 = 6'd5;
 
+    choose_num_score score_block_1(.Clk(Clk),.block_type(num1),.init_x(init_x_1),.init_y(init_y_1),.block_x(block_x_1_try_choose),.block_y(block_y_1_try_choose));
+    choose_num_score score_block_2(.Clk(Clk),.block_type(num2),.init_x(init_x_2),.init_y(init_y_2),.block_x(block_x_2_try_choose),.block_y(block_y_2_try_choose));
+    choose_num_score score_block_3(.Clk(Clk),.block_type(num3),.init_x(init_x_3),.init_y(init_y_3),.block_x(block_x_3_try_choose),.block_y(block_y_3_try_choose));
     memory_num_on_score_ground memory_block_on_score_ground1(.Clk(Clk),.block_x(block_x_1),.block_y(block_y_1),.score_ground(score_ground_wire1));
     memory_num_on_score_ground memory_block_on_score_ground2(.Clk(Clk),.block_x(block_x_2),.block_y(block_y_2),.score_ground(score_ground_wire2));
     memory_num_on_score_ground memory_block_on_score_ground3(.Clk(Clk),.block_x(block_x_3),.block_y(block_y_3),.score_ground(score_ground_wire3));
-    /////////////
-    //memory_three_score three_score(.Clk(Clk),.score_ground(score_ground_wire));
+
 
     
     //////// Do not modify the always_ff blocks. ////////
     // Detect rising edge of frame_clk
 
-    // rotation_block rotation_block1(.block_x(block_x),.block_y(block_y),.enable_rotation(enable_rotation),.block_try_x(block_x_try_rotation),.block_try_y(block_y_try_rotation));
+    wire [5:0] block_x_try_rotation [24:0];
+    wire [5:0] block_y_try_rotation [24:0];
+    logic enable_rotation;
+    logic enable_control;
+    logic [1:0] control_command;
+    //rotation_block rotation_block1(.block_x(block_x),.block_y(block_y),.enable_rotation(one_second_rising_edge),.block_try_x(block_x_try_rotation),.block_try_y(block_y_try_rotation));
+    control_block control_block1(.block_x(block_x),.block_y(block_y),.control_command(control_command),.enable_control(enable_control),.block_try_x(block_x_try_rotation),.block_try_y(block_y_try_rotation));
+    timer timer1(.clk(one_second_rising_edge),.Reset(Reset),.enable_choose(enable_choose),.enable_control(enable_control),.control_command(control_command));
+
 
     logic frame_clk_delayed, frame_clk_rising_edge;
 
 
     logic [19:0] frame_clk_rising_edge_count=20'b0;
 
+    logic one_second_rising_edge; // 输出信号，表示一秒钟的时钟边缘
+    reg [5:0] edge_count = 0;     // 6-bit 计数器足以计数至 50
+
     always_ff @ (posedge Clk) begin
         frame_clk_delayed <= frame_clk;
         frame_clk_rising_edge <= (frame_clk == 1'b1) && (frame_clk_delayed == 1'b0);
-        
+
+        // 当检测到 frame_clk 的上升沿时
+        if (frame_clk_rising_edge) begin
+            edge_count <= edge_count + 1; // 增加计数器
+            // 当计数器达到 50 时
+            if (edge_count == 50) begin
+                one_second_rising_edge <= 1'b1; // 设置 one_second_rising_edge 为高
+                edge_count <= 0;               // 重置计数器
+            end else begin
+                one_second_rising_edge <= 1'b0; // 其他情况保持 one_second_rising_edge 为低
+            end
+        end else begin
+            one_second_rising_edge <= 1'b0; // 如果没有 frame_clk 上升沿，确保输出保持低
+        end
     end
 
     always_ff @ (posedge frame_clk_rising_edge) begin
         frame_clk_rising_edge_count+=1'b1;
+    end
+
+    always_ff @ (posedge one_second_rising_edge) begin
+        if (Reset) begin
+            num1 = 6'd0;
+            //enable_rotation=1'b0;
+        end
+        else begin 
+            num1 = 6'd3;
+            //enable_rotation=1'b1;
+        end
     end
 
 
@@ -272,6 +157,7 @@ module  ball ( input         Clk,                // 50 MHz clock
         is_ball <= is_ball0 | is_ball1 | is_ball2 | is_ball3;
         if (Reset) begin
             // block_type<=6'b000000;
+            
 
             for (int i = 0; i < 30; i = i + 1) begin
                 moving_block_ground[i] <= 20'h00000;  // Clear memory array
@@ -302,35 +188,37 @@ module  ball ( input         Clk,                // 50 MHz clock
         end
 
         ///////
-        if (enable_update_score_ground) begin
-            for (int i = 0; i < 60; i++) begin
-                score_ground1[i] <= score_ground_wire1[i];
-            end
+        for (int i = 0; i < 60; i++) begin
+            score_ground1[i] <= score_ground_wire1[i];
         end
-        if (enable_update_score_ground) begin
-            for (int i = 0; i < 60; i++) begin
-                score_ground2[i] <= score_ground_wire2[i];
-            end
+        for (int i = 0; i < 60; i++) begin
+            score_ground2[i] <= score_ground_wire2[i];
         end
-        if (enable_update_score_ground) begin
-            for (int i = 0; i < 60; i++) begin
-                score_ground3[i] <= score_ground_wire3[i];
-            end
+        for (int i = 0; i < 60; i++) begin
+            score_ground3[i] <= score_ground_wire3[i];
+        end
+        for (int i=0; i<34; i=i+1) begin
+                block_x_1[i]<=block_x_1_try_choose[i];
+                block_y_1[i]<=block_y_1_try_choose[i];
+                block_x_2[i]<=block_x_2_try_choose[i];
+                block_y_2[i]<=block_y_2_try_choose[i];
+                block_x_3[i]<=block_x_3_try_choose[i];
+                block_y_3[i]<=block_y_3_try_choose[i];
         end
         /////
 
         if (enable_choose) begin
             for (int i=0; i<25; i=i+1) begin
-                block_x[i]=block_x_try_choose[i];
-                block_y[i]=block_y_try_choose[i];
+                block_x[i]<=block_x_try_choose[i];
+                block_y[i]<=block_y_try_choose[i];
             end
         end
-        // else if(enable_rotation) begin
-        //     for (int i=0; i<25; i=i+1) begin
-        //         block_x[i]=block_x_try_rotation[i];
-        //         block_y[i]=block_y_try_rotation[i];
-        //     end
-        // end
+        else if (enable_rotation) begin
+            for (int i=0; i<25; i=i+1) begin
+                block_x[i]=block_x_try_rotation[i];
+                block_y[i]=block_y_try_rotation[i];
+            end
+        end
     end
     //////// Do not modify the always_ff blocks. ////////
     
@@ -341,25 +229,113 @@ module  ball ( input         Clk,                // 50 MHz clock
         enable_update_moving_block_ground=1'b1;
         enable_update_score_ground=1'b1;
         
-        // Update position and motion only at rising edge of frame clock
-        if(frame_clk_rising_edge_count[4:0]==5'b10000 && frame_clk_rising_edge) 
-        begin
-            //up_down_shift=2'b00;
-            //enable_rotation=1'b0;
-            enable_choose=1'b1;
-        end
-        else begin
-            //up_down_shift=2'b00;
-            //enable_rotation=1'b1;
-            enable_choose=1'b0;
-        end
+        // // Update position and motion only at rising edge of frame clock
+        // if(frame_clk_rising_edge_count[11:0]==12'h001 && frame_clk_rising_edge) 
+        // begin
+        //     //up_down_shift=2'b00;
+        //     //enable_rotation=1'b0;
+        //     enable_choose=1'b1;
+        // end
+        // else begin
+        //     //up_down_shift=2'b00;
+        //     //enable_rotation=1'b1;
+        //     enable_choose=1'b0;
+        // end
     end
 
-    logic  is_ball0, is_ball1, is_ball2, is_ball3;
-    draw_ground draw_moving_block_ground(.frame_clk(frame_clk),.DrawX(DrawX),.DrawY(DrawY),.moving_block_ground(moving_block_ground),.is_ball(is_ball0));
-    draw_score draw_score_ground1(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground1),.is_ball(is_ball1));
-    draw_score draw_score_ground2(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground2),.is_ball(is_ball2));
-    draw_score draw_score_ground3(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground3),.is_ball(is_ball3));
+
+    logic [4:0] is_ball0, is_ball1, is_ball2, is_ball3;
+    draw_ground draw_moving_block_ground(.frame_clk(frame_clk),.DrawX(DrawX),.DrawY(DrawY),.moving_block_ground(moving_block_ground),.is_ball_color(is_ball0_color_order),.is_ball(is_ball0));
+    draw_score draw_score_ground1(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground1),.is_ball_color(is_ball1_color_order),.is_ball(is_ball1));
+    draw_score draw_score_ground2(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground2),.is_ball_color(is_ball2_color_order),.is_ball(is_ball2));
+    draw_score draw_score_ground3(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground3),.is_ball_color(is_ball3_color_order),.is_ball(is_ball3));
+
+endmodule
+
+
+module timer(
+    input wire clk,
+    input wire Reset,
+    output reg enable_choose,
+    output reg enable_control,
+    output [1:0] control_command
+);
+
+reg [5:0] counter;  // 用于计数的寄存器，足够计数几秒
+
+always_ff @(posedge clk or posedge Reset) begin
+    if (Reset) begin
+        counter <= 6'd0;  // 重置时计数器归零
+        enable_choose <= 1'b0;  // 重置时enable_choose设为0
+        
+    end else begin
+        if (counter == 6'd0) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_choose <= 1'b1;  // 在第一秒时enable_choose设为1
+            control_command <= 2'b00;  // 转
+        end
+        else if (counter == 6'd1) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_choose <= 1'b0;
+            enable_control <= 1'b1;  // 在第一秒之后enable_control设为1
+
+        end
+        else if (counter == 6'd2) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_control <= 1'b0;
+            control_command <= 2'b10;  // 左
+        end
+        else if (counter == 6'd3) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_choose <= 1'b1;  // 在第一秒之后enable_choose设为1
+        end
+        else if (counter == 6'd4) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_choose <= 1'b0;  // 在第一秒之后enable_choose设为0
+            control_command <= 2'b11;  // 下
+        end
+        else if (counter == 6'd5) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
+        end
+        else if (counter == 6'd6) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
+            control_command <= 2'b01;  // 右
+        end
+        else if (counter == 6'd7) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_choose <= 1'b1;  // 在第一秒之后enable_choose设为1
+        end
+        else if (counter == 6'd8) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_choose <= 1'b0;  // 在第一秒之后enable_choose设为0
+            control_command <= 2'b00;  // 转
+        end
+        else if (counter == 6'd9) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
+        end
+        else if (counter == 6'd10) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
+        end
+        else if (counter == 6'd11) begin
+            counter <= counter + 6'd1;  // 增加计数器
+            enable_choose <= 1'b1;  // 在第一秒之后enable_choose设为1
+        end
+        else if (counter == 6'd12) begin
+            counter <= counter + 6'd1;  // 增加计数器
+        end
+
+        else begin
+            enable_choose <= 1'b0;  // 在第一秒之后enable_choose设为0
+            if (counter < 6'd63) begin  // 确保计数器不会溢出
+                counter <= counter + 6'd1;
+            end
+        end
+    end
+end
 
 endmodule
 
@@ -384,8 +360,8 @@ module rotation_block(
         for (int i = 1; i < 25; i = i + 1) begin
             if (block_x[i] < 20 && block_y[i] < 30) begin
                 // Apply rotation transformation formula for 90 degrees CW
-                block_try_x[i] <= (rotation_center_X - (block_y[i] << 1) + rotation_center_Y ) >> 1;  // Convert back from scaled values
-                block_try_y[i] <= (rotation_center_Y - rotation_center_X + (block_x[i] << 1)) >> 1;  // Convert back from scaled values
+                block_try_x[i] <= (rotation_center_X - (block_y[i] *2) + rotation_center_Y ) /2 ;  // Convert back from scaled values
+                block_try_y[i] <= (rotation_center_Y - rotation_center_X + (block_x[i] *2)) /2 ;  // Convert back from scaled values
             end else begin
                 block_try_x[i] <= 6'b111111;  // Invalid block
                 block_try_y[i] <= 6'b111111;
@@ -394,12 +370,181 @@ module rotation_block(
     end
 endmodule
 
+module control_block(
+    input [5:0] block_x [24:0],
+    input [5:0] block_y [24:0],
+    input [1:0] control_command, // 00: rotation 01: right 10: left 11: down
+    input logic enable_control,
+    output reg [5:0] block_try_x [24:0],
+    output reg [5:0] block_try_y [24:0]
+);
+    // Rotation center coordinates adjusted for possible 0.5 increment
+    logic signed [7:0] rotation_center_X, rotation_center_Y;
+
+
+    always_ff @(posedge enable_control) begin
+        case
+            (control_command)
+            2'b00: begin
+                block_try_x[0] <= block_x[0];  // Keep the rotation center the same
+                block_try_y[0] <= block_y[0];
+                rotation_center_X = block_x[0];  // Multiply by 2 to handle 0.5 step
+                rotation_center_Y = block_y[0];  // Multiply by 2 to handle 0.5 step
+                
+                for (int i = 1; i < 25; i = i + 1) begin
+                    if (block_x[i] < 20 && block_y[i] < 30) begin
+                        // Apply rotation transformation formula for 90 degrees CW
+                        block_try_x[i] <= (rotation_center_X - (block_y[i] *2) + rotation_center_Y ) /2 ;  // Convert back from scaled values
+                        block_try_y[i] <= (rotation_center_Y - rotation_center_X + (block_x[i] *2)) /2 ;  // Convert back from scaled values
+                    end else begin
+                        block_try_x[i] <= 6'b111111;  // Invalid block
+                        block_try_y[i] <= 6'b111111;
+                    end
+                end
+            end
+            2'b01: begin
+                for (int i = 1; i < 25; i = i + 1) begin
+                    if (block_x[i] < 19) begin
+                        block_try_x[i] <= block_x[i] + 1;
+                        block_try_y[i] <= block_y[i];
+                    end else begin
+                        block_try_x[i] <= 6'b111111;  // Invalid block
+                        block_try_y[i] <= 6'b111111;
+                    end
+                end
+            end
+            2'b10: begin
+                for (int i = 1; i < 25; i = i + 1) begin
+                    if (block_x[i] > 0) begin
+                        block_try_x[i] <= block_x[i] - 1;
+                        block_try_y[i] <= block_y[i];
+                    end else begin
+                        block_try_x[i] <= 6'b111111;  // Invalid block
+                        block_try_y[i] <= 6'b111111;
+                    end
+                end
+            end
+            2'b11: begin
+                for (int i = 1; i < 25; i = i + 1) begin
+                    if (block_y[i] > 0) begin
+                        block_try_x[i] <= block_x[i];
+                        block_try_y[i] <= block_y[i] - 1;
+                    end else begin
+                        block_try_x[i] <= 6'b111111;  // Invalid block
+                        block_try_y[i] <= 6'b111111;
+                    end
+                end
+            end
+        endcase
+    end
+endmodule
+
+module left_right_shift_block(
+    input Clk,
+    input [5:0] block_x [24:0],
+    input [5:0] block_y [24:0],
+    input logic [1:0] left_right_shift, // 00:none 01:right 10:left
+    input logic enable_left_right_shift,
+    output [5:0] block_try_x [24:0],
+    output [5:0] block_try_y [24:0]
+);
+    always_ff @(posedge left_right_shift) begin
+
+        // the first block is the center of the block, first bit represent 0.5 
+        if (left_right_shift==2'b10) begin
+            block_try_x[0]=block_x[0]+2;
+            block_try_y[0]=block_y[0];
+        end
+        else if (left_right_shift==2'b01) begin
+            block_try_x[0]=block_x[0]-2;
+            block_try_y[0]=block_y[0];
+        end
+        else begin
+            block_try_x[0]=block_x[0];
+            block_try_y[0]=block_y[0];
+        end
+
+        for (int i=1; i<25; i=i+1) begin
+            if (left_right_shift==2'b10) begin
+                block_try_x[i]=block_x[i]+1;
+                block_try_y[i]=block_y[i];
+            end
+            else if (left_right_shift==2'b01) begin
+                block_try_x[i]=block_x[i]-1;
+                block_try_y[i]=block_y[i];
+            end
+            else begin
+                block_try_x[i]=block_x[i];
+                block_try_y[i]=block_y[i];
+            end
+
+            // if out of bound, raise the flag
+            // if (block_try_x[i]>19) begin
+            //     block_try_x[i]=0;
+            // end
+            // else if (block_try_x[i]>63) begin
+            //     block_try_x[0]=6'b111111;
+            //     block_try_x[i]=6'b111111;
+            // end
+        end
+    end
+endmodule
+
+module up_down_shift_block(
+    input [5:0] block_x [24:0],
+    input [5:0] block_y [24:0],
+    input logic [1:0] up_down_shift, // 00:none 01:down 10:up
+    output [5:0] block_try_x [24:0],
+    output [5:0] block_try_y [24:0]
+);
+    always_ff @(posedge up_down_shift) begin
+
+        // the first block is the center of the block, first bit represent 0.5 
+        if (up_down_shift==2'b10) begin
+            block_try_x[0]=block_x[0];
+            block_try_y[0]=block_y[0]+2;
+        end
+        else if (up_down_shift==2'b01) begin
+            block_try_x[0]=block_x[0];
+            block_try_y[0]=block_y[0]-2;
+        end
+        else begin
+            block_try_x[0]=block_x[0];
+            block_try_y[0]=block_y[0];
+        end
+
+        for (int i=1; i<25; i=i+1) begin
+            if (up_down_shift==2'b10) begin
+                block_try_x[i]=block_x[i];
+                block_try_y[i]=block_y[i]+1;
+            end
+            else if (up_down_shift==2'b01) begin
+                block_try_x[i]=block_x[i];
+                block_try_y[i]=block_y[i]-1;
+            end
+            else begin
+                block_try_x[i]=block_x[i];
+                block_try_y[i]=block_y[i];
+            end
+
+            // if out of bound, raise the flag
+            // if (block_try_y[i]>29) begin
+            //     block_try_y[i]=0;
+            // end
+            // else if (block_try_y[i]>63) begin
+            //     block_try_y[0]=6'b111111;
+            //     block_try_y[i]=6'b111111;
+            // end
+        end
+    end
+endmodule
 
 module draw_ground(
     input logic frame_clk,               // Frame clock signal
     input [9:0] DrawX, DrawY,            // Current pixel coordinates
     input [19:0] moving_block_ground[29:0],  // Memory of moving blocks, 30 rows each 20 bits wide
-    output logic is_ball                 // Output signal if the pixel is part of a ball
+    input [4:0] is_ball_color,
+    output logic [4:0]  is_ball                // Output signal if the pixel is part of a ball
 );
 
     // Constants for dimensions
@@ -414,7 +559,7 @@ module draw_ground(
 
     // Assign block indices based on the current pixel coordinates
     always_comb begin
-        block_index_x = (HALF_SCREEN_WIDTH- DrawX -1) / PIXELS_PER_BLOCK;  // Determine which block in the x direction
+        block_index_x = (DrawX) / PIXELS_PER_BLOCK;  // Determine which block in the x direction
         block_index_y = (SCREEN_HEIGHT - DrawY - 1) / PIXELS_PER_BLOCK;  // Reverse Y direction
 
         // Ensure each block is visually distinct by checking if the pixel is not on the block's border
@@ -422,7 +567,8 @@ module draw_ground(
             if (DrawX % PIXELS_PER_BLOCK != 0 && DrawX % PIXELS_PER_BLOCK != 15 &&
                 (SCREEN_HEIGHT - DrawY - 1) % PIXELS_PER_BLOCK != 0 &&
                 (SCREEN_HEIGHT - DrawY - 1) % PIXELS_PER_BLOCK != 15) begin
-                is_ball = moving_block_ground[block_index_y][block_index_x];  // Map the bit to is_ball output
+                // is_ball = moving_block_ground[block_index_y][block_index_x];  // Map the bit to is_ball output
+                is_ball = moving_block_ground[block_index_y][block_index_x]*is_ball_color;  // Map the bit to is_ball output
             end else begin
                 is_ball = 0;  // On the border, use background
             end
@@ -569,7 +715,8 @@ module draw_score(
     input logic frame_clk,               // Frame clock signal
     input [9:0] DrawX_in, DrawY_in,            // Current pixel coordinates
     input [39:0] score_ground[59:0],  // Memory of moving blocks, 30 rows each 20 bits wide
-    output logic is_ball                 // Output signal if the pixel is part of a ball
+    input [4:0] is_ball_color,
+    output logic [4:0] is_ball                 // Output signal if the pixel is part of a ball
 );
 
     // Constants for dimensions
@@ -582,22 +729,25 @@ module draw_score(
     logic [9:0] DrawX, DrawY;            // Current pixel coordinates
 
     // Compute the block index based on DrawX and DrawY
-    logic [4:0] block_index_x;   // 20 blocks (0-19) across the X direction, fitting within 320 pixels (16 pixels each)
-    logic [4:0] block_index_y;   // 30 blocks (0-29) down the Y direction
+    logic [5:0] block_index_x;   // 20 blocks (0-19) across the X direction, fitting within 320 pixels (16 pixels each)
+    logic [5:0] block_index_y;   // 30 blocks (0-29) down the Y direction
 
     // Assign block indices based on the current pixel coordinates
     always_comb begin
         DrawX = DrawX_in -320;
         DrawY = DrawY_in;
-        block_index_x = (HALF_SCREEN_WIDTH- DrawX -1) / PIXELS_PER_BLOCK;  // Determine which block in the x direction
+        block_index_x = (DrawX) / PIXELS_PER_BLOCK;  // Determine which block in the x direction
         block_index_y = (SCREEN_HEIGHT - DrawY - 1) / PIXELS_PER_BLOCK;  // Reverse Y direction
 
         // Ensure each block is visually distinct by checking if the pixel is not on the block's border
-        if (DrawX < 320 && block_index_y < BLOCKS_PER_COL && block_index_x < BLOCKS_PER_ROW) begin
+        if (block_index_x==0) 
+            is_ball=1;
+        else if (DrawX < 320 && block_index_y < BLOCKS_PER_COL && block_index_x < BLOCKS_PER_ROW) begin
 
-            is_ball = score_ground[block_index_y][block_index_x];  // Map the bit to is_ball output
-
-        end else begin
+            //is_ball = score_ground[block_index_y][block_index_x];  // Map the bit to is_ball output
+            is_ball = score_ground[block_index_y][block_index_x]*is_ball_color;  // Map the bit to is_ball output
+        end
+        else begin
             is_ball = 0;  // Outside the specified area, not part of the ball
         end
     end
@@ -685,7 +835,7 @@ module choose_num_score(
     logic  bottom_edge, middle_edge, top_edge;
     logic  left_bottom_point, right_bottom_point, left_top_point, right_top_point, left_middle_point, right_middle_point;
     
-    always_comb begin
+    always_ff @(posedge Clk) begin
         case (block_type)
             // Block type 0: number 0
             6'b000000:
@@ -882,9 +1032,9 @@ module choose_num_score(
                     left_bottom_edge=1'b0;
                 end
         endcase
-    end
 
-    always_ff @(posedge Clk) begin
+
+    
         if (left_bottom_point) begin
             block_x[0]<=init_x;
             block_y[0]<=init_y;
@@ -1077,103 +1227,7 @@ module choose_num_score(
     end
 endmodule
 
-module left_right_shift_block(
-    input [5:0] block_x [24:0],
-    input [5:0] block_y [24:0],
-    input logic [1:0] left_right_shift, // 00:none 01:right 10:left
-    output [5:0] block_try_x [24:0],
-    output [5:0] block_try_y [24:0]
-);
-    always_ff @(posedge left_right_shift) begin
 
-        // the first block is the center of the block, first bit represent 0.5 
-        if (left_right_shift==2'b10) begin
-            block_try_x[0]=block_x[0]+2;
-            block_try_y[0]=block_y[0];
-        end
-        else if (left_right_shift==2'b01) begin
-            block_try_x[0]=block_x[0]-2;
-            block_try_y[0]=block_y[0];
-        end
-        else begin
-            block_try_x[0]=block_x[0];
-            block_try_y[0]=block_y[0];
-        end
-
-        for (int i=1; i<25; i=i+1) begin
-            if (left_right_shift==2'b10) begin
-                block_try_x[i]=block_x[i]+1;
-                block_try_y[i]=block_y[i];
-            end
-            else if (left_right_shift==2'b01) begin
-                block_try_x[i]=block_x[i]-1;
-                block_try_y[i]=block_y[i];
-            end
-            else begin
-                block_try_x[i]=block_x[i];
-                block_try_y[i]=block_y[i];
-            end
-
-            // if out of bound, raise the flag
-            // if (block_try_x[i]>19) begin
-            //     block_try_x[i]=0;
-            // end
-            // else if (block_try_x[i]>63) begin
-            //     block_try_x[0]=6'b111111;
-            //     block_try_x[i]=6'b111111;
-            // end
-        end
-    end
-endmodule
-
-module up_down_shift_block(
-    input [5:0] block_x [24:0],
-    input [5:0] block_y [24:0],
-    input logic [1:0] up_down_shift, // 00:none 01:down 10:up
-    output [5:0] block_try_x [24:0],
-    output [5:0] block_try_y [24:0]
-);
-    always_ff @(posedge up_down_shift) begin
-
-        // the first block is the center of the block, first bit represent 0.5 
-        if (up_down_shift==2'b10) begin
-            block_try_x[0]=block_x[0];
-            block_try_y[0]=block_y[0]+2;
-        end
-        else if (up_down_shift==2'b01) begin
-            block_try_x[0]=block_x[0];
-            block_try_y[0]=block_y[0]-2;
-        end
-        else begin
-            block_try_x[0]=block_x[0];
-            block_try_y[0]=block_y[0];
-        end
-
-        for (int i=1; i<25; i=i+1) begin
-            if (up_down_shift==2'b10) begin
-                block_try_x[i]=block_x[i];
-                block_try_y[i]=block_y[i]+1;
-            end
-            else if (up_down_shift==2'b01) begin
-                block_try_x[i]=block_x[i];
-                block_try_y[i]=block_y[i]-1;
-            end
-            else begin
-                block_try_x[i]=block_x[i];
-                block_try_y[i]=block_y[i];
-            end
-
-            // if out of bound, raise the flag
-            // if (block_try_y[i]>29) begin
-            //     block_try_y[i]=0;
-            // end
-            // else if (block_try_y[i]>63) begin
-            //     block_try_y[0]=6'b111111;
-            //     block_try_y[i]=6'b111111;
-            // end
-        end
-    end
-endmodule
 
 
 module clean_moving_block_ground(
