@@ -26,6 +26,15 @@ __pycache__/
 **/db/
 **/output_files/
 **/simulation/
+**/software/
+*.cdf
+*.done
+*.smsg
+*.summary
+*.sld
+*.bak
+*.jdi
+*.qdf
 
 # User-specific files
 *.qws
