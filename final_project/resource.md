@@ -18,5 +18,21 @@
 
 ## FPGA - Tetris Game Reference 
 
-https://blog.csdn.net/weixin_44830487/article/details/115972133
+1. Verilog HDL高级数字设计
+
+   实验报告
+
+   题目：“俄罗斯方块”FPGA实现
+
+   https://blog.csdn.net/weixin_44830487/article/details/115972133
+
+2. tetris game on FPGA
+
+   https://github.com/hanchenye/FPGA-tetris?tab=readme-ov-file
+
+3. VGA standard timing
+
+   http://tinyvga.com/vga-timing/640x480@60Hz
+
+4. 
 
