@@ -104,8 +104,51 @@ module  ball ( input         Clk,                // 50 MHz clock
     logic enable_control;
     logic [1:0] control_command;
     //rotation_block rotation_block1(.block_x(block_x),.block_y(block_y),.enable_rotation(one_second_rising_edge),.block_try_x(block_x_try_rotation),.block_try_y(block_y_try_rotation));
+
+    logic ask_control;
+    always_comb
+    begin
+        case(keycode)
+            // W rotation
+            10'd26:
+                begin
+                    control_command = 2'b00;
+                    ask_control=1'b1;
+                end
+            // S down
+            10'd22:
+                begin
+                    control_command = 2'b11;
+                    ask_control=1'b1;
+                end
+
+            // A left
+            10'd4:
+                begin
+                    control_command = 2'b10;
+                    ask_control=1'b1;
+                end
+
+            // D right
+            10'd7:
+                begin
+                    control_command = 2'b01;
+                    ask_control=1'b1;
+                end
+            default:
+                begin
+                    control_command = 2'b00;
+                    ask_control=1'b0;
+                end
+        endcase
+    end
+
+
+//                 endcase 
+    logic conflict;
     control_block control_block1(.block_x(block_x),.block_y(block_y),.control_command(control_command),.enable_control(enable_control),.block_try_x(block_x_try_rotation),.block_try_y(block_y_try_rotation));
-    timer timer1(.clk(one_second_rising_edge),.Reset(Reset),.enable_choose(enable_choose),.enable_control(enable_control),.control_command(control_command));
+    allow_control_check allow_control_check1(.block_x(block_x_try_rotation),.block_y(block_y_try_rotation),.conflict(conflict));
+    timer timer1(.clk(one_second_rising_edge),.Reset(Reset),.enable_choose(enable_choose));
 
 
     logic frame_clk_delayed, frame_clk_rising_edge;
@@ -179,6 +222,17 @@ module  ball ( input         Clk,                // 50 MHz clock
             block_type<=6'b000000; 
         end
 
+        if (ask_control) 
+        begin
+            enable_control=1'b1;
+        end
+        else if (keycode==0) begin
+            enable_control=1'b0;
+        end
+        else begin
+            enable_control=1'b0;
+        end
+
 
 
         if (enable_update_moving_block_ground) begin
@@ -213,7 +267,7 @@ module  ball ( input         Clk,                // 50 MHz clock
                 block_y[i]<=block_y_try_choose[i];
             end
         end
-        else if (enable_rotation) begin
+        else if (enable_control && (~conflict)) begin
             for (int i=0; i<25; i=i+1) begin
                 block_x[i]=block_x_try_rotation[i];
                 block_y[i]=block_y_try_rotation[i];
@@ -252,13 +306,35 @@ module  ball ( input         Clk,                // 50 MHz clock
 
 endmodule
 
+module allow_control_check(
+    input [5:0] block_x [24:0],  // Array of x-coordinates
+    input [5:0] block_y [24:0],  // Array of y-coordinates
+    input logic enable_check_conflict,         // Input signal indicating a boundary conflict
+    output logic conflict        // Output signal indicating a boundary conflict
+);
+
+    // Check for out of bounds in a combinational block
+    always_comb begin
+        conflict = 1'b0;  // Default to no conflict
+
+        for (int i = 1; i < 25; i = i + 1) begin
+            // Check if any coordinate is out of bounds
+            if (block_x[i]!=6'b111111 && block_y[i]!=6'b111111) begin
+                if (block_x[i] < 0 || block_x[i] > 19 || block_y[i] < 0 || block_y[i] > 29) begin
+                    conflict = 1'b1;  // Set conflict to 1 if any coordinate is out of bounds
+                    break;  // Exit loop early since we've found a conflict
+                end
+            end
+        end
+    end
+endmodule
 
 module timer(
     input wire clk,
     input wire Reset,
-    output reg enable_choose,
-    output reg enable_control,
-    output [1:0] control_command
+    output reg enable_choose
+    //output reg enable_control,
+    //output [1:0] control_command
 );
 
 reg [5:0] counter;  // 用于计数的寄存器，足够计数几秒
@@ -269,64 +345,69 @@ always_ff @(posedge clk or posedge Reset) begin
         enable_choose <= 1'b0;  // 重置时enable_choose设为0
         
     end else begin
-        if (counter == 6'd0) begin
+        if (counter == 6'd1) begin
             counter <= counter + 6'd1;  // 增加计数器
             enable_choose <= 1'b1;  // 在第一秒时enable_choose设为1
-            control_command <= 2'b00;  // 转
+            // control_command <= 2'b00;  // 转
         end
-        else if (counter == 6'd1) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_choose <= 1'b0;
-            enable_control <= 1'b1;  // 在第一秒之后enable_control设为1
+        // else if (counter == 6'd1) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_choose <= 1'b1;  // 在第一秒时enable_choose设为1
+        //     control_command <= 2'b00;  // 转
+        // end
+        // else if (counter == 6'd2) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_choose <= 1'b0;
+        //     enable_control <= 1'b1;  // 在第一秒之后enable_control设为1
 
-        end
-        else if (counter == 6'd2) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_control <= 1'b0;
-            control_command <= 2'b10;  // 左
-        end
-        else if (counter == 6'd3) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_choose <= 1'b1;  // 在第一秒之后enable_choose设为1
-        end
-        else if (counter == 6'd4) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_choose <= 1'b0;  // 在第一秒之后enable_choose设为0
-            control_command <= 2'b11;  // 下
-        end
-        else if (counter == 6'd5) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
-        end
-        else if (counter == 6'd6) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
-            control_command <= 2'b01;  // 右
-        end
-        else if (counter == 6'd7) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_choose <= 1'b1;  // 在第一秒之后enable_choose设为1
-        end
-        else if (counter == 6'd8) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_choose <= 1'b0;  // 在第一秒之后enable_choose设为0
-            control_command <= 2'b00;  // 转
-        end
-        else if (counter == 6'd9) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
-        end
-        else if (counter == 6'd10) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
-        end
-        else if (counter == 6'd11) begin
-            counter <= counter + 6'd1;  // 增加计数器
-            enable_choose <= 1'b1;  // 在第一秒之后enable_choose设为1
-        end
-        else if (counter == 6'd12) begin
-            counter <= counter + 6'd1;  // 增加计数器
-        end
+        // end
+        // else if (counter == 6'd3) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b0;
+        //     control_command <= 2'b10;  // 左
+        // end
+        // else if (counter == 6'd4) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
+        // end
+        // else if (counter == 6'd5) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
+        //     control_command <= 2'b11;  // 下
+        // end
+        // else if (counter == 6'd6) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
+        // end
+        // else if (counter == 6'd7) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
+        //     control_command <= 2'b01;  // 右
+        // end
+        // else if (counter == 6'd8) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
+        // end
+        // else if (counter == 6'd9) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
+        //     control_command <= 2'b00;  // 转
+        // end
+        // else if (counter == 6'd10) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
+        // end
+        // else if (counter == 6'd11) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
+        // end
+        // else if (counter == 6'd12) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
+        // end
+        // else if (counter == 6'd13) begin
+        //     counter <= counter + 6'd1;  // 增加计数器
+        // end
 
         else begin
             enable_choose <= 1'b0;  // 在第一秒之后enable_choose设为0
@@ -403,6 +484,8 @@ module control_block(
                 end
             end
             2'b01: begin
+                block_try_x[0] <= block_x[0]+2;  // Keep the rotation center the same
+                block_try_y[0] <= block_y[0];
                 for (int i = 1; i < 25; i = i + 1) begin
                     if (block_x[i] < 19) begin
                         block_try_x[i] <= block_x[i] + 1;
@@ -414,6 +497,8 @@ module control_block(
                 end
             end
             2'b10: begin
+                block_try_x[0] <= block_x[0]-2;  // Keep the rotation center the same
+                block_try_y[0] <= block_y[0];
                 for (int i = 1; i < 25; i = i + 1) begin
                     if (block_x[i] > 0) begin
                         block_try_x[i] <= block_x[i] - 1;
@@ -425,6 +510,8 @@ module control_block(
                 end
             end
             2'b11: begin
+                block_try_x[0] <= block_x[0];  // Keep the rotation center the same
+                block_try_y[0] <= block_y[0]-2;
                 for (int i = 1; i < 25; i = i + 1) begin
                     if (block_y[i] > 0) begin
                         block_try_x[i] <= block_x[i];
@@ -439,105 +526,105 @@ module control_block(
     end
 endmodule
 
-module left_right_shift_block(
-    input Clk,
-    input [5:0] block_x [24:0],
-    input [5:0] block_y [24:0],
-    input logic [1:0] left_right_shift, // 00:none 01:right 10:left
-    input logic enable_left_right_shift,
-    output [5:0] block_try_x [24:0],
-    output [5:0] block_try_y [24:0]
-);
-    always_ff @(posedge left_right_shift) begin
+// module left_right_shift_block(
+//     input Clk,
+//     input [5:0] block_x [24:0],
+//     input [5:0] block_y [24:0],
+//     input logic [1:0] left_right_shift, // 00:none 01:right 10:left
+//     input logic enable_left_right_shift,
+//     output [5:0] block_try_x [24:0],
+//     output [5:0] block_try_y [24:0]
+// );
+//     always_ff @(posedge left_right_shift) begin
 
-        // the first block is the center of the block, first bit represent 0.5 
-        if (left_right_shift==2'b10) begin
-            block_try_x[0]=block_x[0]+2;
-            block_try_y[0]=block_y[0];
-        end
-        else if (left_right_shift==2'b01) begin
-            block_try_x[0]=block_x[0]-2;
-            block_try_y[0]=block_y[0];
-        end
-        else begin
-            block_try_x[0]=block_x[0];
-            block_try_y[0]=block_y[0];
-        end
+//         // the first block is the center of the block, first bit represent 0.5 
+//         if (left_right_shift==2'b10) begin
+//             block_try_x[0]=block_x[0]+2;
+//             block_try_y[0]=block_y[0];
+//         end
+//         else if (left_right_shift==2'b01) begin
+//             block_try_x[0]=block_x[0]-2;
+//             block_try_y[0]=block_y[0];
+//         end
+//         else begin
+//             block_try_x[0]=block_x[0];
+//             block_try_y[0]=block_y[0];
+//         end
 
-        for (int i=1; i<25; i=i+1) begin
-            if (left_right_shift==2'b10) begin
-                block_try_x[i]=block_x[i]+1;
-                block_try_y[i]=block_y[i];
-            end
-            else if (left_right_shift==2'b01) begin
-                block_try_x[i]=block_x[i]-1;
-                block_try_y[i]=block_y[i];
-            end
-            else begin
-                block_try_x[i]=block_x[i];
-                block_try_y[i]=block_y[i];
-            end
+//         for (int i=1; i<25; i=i+1) begin
+//             if (left_right_shift==2'b10) begin
+//                 block_try_x[i]=block_x[i]+1;
+//                 block_try_y[i]=block_y[i];
+//             end
+//             else if (left_right_shift==2'b01) begin
+//                 block_try_x[i]=block_x[i]-1;
+//                 block_try_y[i]=block_y[i];
+//             end
+//             else begin
+//                 block_try_x[i]=block_x[i];
+//                 block_try_y[i]=block_y[i];
+//             end
 
-            // if out of bound, raise the flag
-            // if (block_try_x[i]>19) begin
-            //     block_try_x[i]=0;
-            // end
-            // else if (block_try_x[i]>63) begin
-            //     block_try_x[0]=6'b111111;
-            //     block_try_x[i]=6'b111111;
-            // end
-        end
-    end
-endmodule
+//             // if out of bound, raise the flag
+//             // if (block_try_x[i]>19) begin
+//             //     block_try_x[i]=0;
+//             // end
+//             // else if (block_try_x[i]>63) begin
+//             //     block_try_x[0]=6'b111111;
+//             //     block_try_x[i]=6'b111111;
+//             // end
+//         end
+//     end
+// endmodule
 
-module up_down_shift_block(
-    input [5:0] block_x [24:0],
-    input [5:0] block_y [24:0],
-    input logic [1:0] up_down_shift, // 00:none 01:down 10:up
-    output [5:0] block_try_x [24:0],
-    output [5:0] block_try_y [24:0]
-);
-    always_ff @(posedge up_down_shift) begin
+// module up_down_shift_block(
+//     input [5:0] block_x [24:0],
+//     input [5:0] block_y [24:0],
+//     input logic [1:0] up_down_shift, // 00:none 01:down 10:up
+//     output [5:0] block_try_x [24:0],
+//     output [5:0] block_try_y [24:0]
+// );
+//     always_ff @(posedge up_down_shift) begin
 
-        // the first block is the center of the block, first bit represent 0.5 
-        if (up_down_shift==2'b10) begin
-            block_try_x[0]=block_x[0];
-            block_try_y[0]=block_y[0]+2;
-        end
-        else if (up_down_shift==2'b01) begin
-            block_try_x[0]=block_x[0];
-            block_try_y[0]=block_y[0]-2;
-        end
-        else begin
-            block_try_x[0]=block_x[0];
-            block_try_y[0]=block_y[0];
-        end
+//         // the first block is the center of the block, first bit represent 0.5 
+//         if (up_down_shift==2'b10) begin
+//             block_try_x[0]=block_x[0];
+//             block_try_y[0]=block_y[0]+2;
+//         end
+//         else if (up_down_shift==2'b01) begin
+//             block_try_x[0]=block_x[0];
+//             block_try_y[0]=block_y[0]-2;
+//         end
+//         else begin
+//             block_try_x[0]=block_x[0];
+//             block_try_y[0]=block_y[0];
+//         end
 
-        for (int i=1; i<25; i=i+1) begin
-            if (up_down_shift==2'b10) begin
-                block_try_x[i]=block_x[i];
-                block_try_y[i]=block_y[i]+1;
-            end
-            else if (up_down_shift==2'b01) begin
-                block_try_x[i]=block_x[i];
-                block_try_y[i]=block_y[i]-1;
-            end
-            else begin
-                block_try_x[i]=block_x[i];
-                block_try_y[i]=block_y[i];
-            end
+//         for (int i=1; i<25; i=i+1) begin
+//             if (up_down_shift==2'b10) begin
+//                 block_try_x[i]=block_x[i];
+//                 block_try_y[i]=block_y[i]+1;
+//             end
+//             else if (up_down_shift==2'b01) begin
+//                 block_try_x[i]=block_x[i];
+//                 block_try_y[i]=block_y[i]-1;
+//             end
+//             else begin
+//                 block_try_x[i]=block_x[i];
+//                 block_try_y[i]=block_y[i];
+//             end
 
-            // if out of bound, raise the flag
-            // if (block_try_y[i]>29) begin
-            //     block_try_y[i]=0;
-            // end
-            // else if (block_try_y[i]>63) begin
-            //     block_try_y[0]=6'b111111;
-            //     block_try_y[i]=6'b111111;
-            // end
-        end
-    end
-endmodule
+//             // if out of bound, raise the flag
+//             // if (block_try_y[i]>29) begin
+//             //     block_try_y[i]=0;
+//             // end
+//             // else if (block_try_y[i]>63) begin
+//             //     block_try_y[0]=6'b111111;
+//             //     block_try_y[i]=6'b111111;
+//             // end
+//         end
+//     end
+// endmodule
 
 module draw_ground(
     input logic frame_clk,               // Frame clock signal
@@ -1326,16 +1413,4 @@ module block_memory_shift_lines(
         end
     end
 endmodule
-
-
-//module block_memory(
-//    input reg [19:0]    moving_block [3:0],
-//    input logic [5:0]   moving_block_lowesr_level,
-//    input logic         memory_this_block,
-//    output logic        conflict,
-//    output logic        delete_row,
-//    output reg [19:0]   block_memory [29:0]; // 30 row, each block has 20 bits
-//    );
-//
-//endmodule
 

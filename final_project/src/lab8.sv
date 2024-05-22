@@ -65,7 +65,7 @@ module lab8( input               CLOCK_50,
 	 
 	 // new middle valiables
 	 logic [9:0] DrawX,DrawY;
-	 logic is_ball;
+	 logic [4:0]is_ball;
     
     // Interface between NIOS II and EZ-OTG chip
     hpi_io_intf hpi_io_inst(
