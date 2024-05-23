@@ -21,12 +21,24 @@ module  color_mapper ( input        [4:0]   is_ball,            // Whether curre
                      );
     
     logic [7:0] Red, Green, Blue;
-    
+    logic [15:0] idx;
+
+    logic [7:0] R_bg [0:3008];
+    logic [7:0] G_bg [0:3008];
+    logic [7:0] B_bg [0:3008];
+
+    initial begin
+        $readmemh("resource/flower64R.txt",R_bg);
+        $readmemh("resource/flower64G.txt",G_bg);
+        $readmemh("resource/flower64B.txt",B_bg);
+    end
+
+
     // Output colors to VGA
     assign VGA_R = Red;
     assign VGA_G = Green;
     assign VGA_B = Blue;
-    
+    assign idx   = (DrawY / 4) *  64 + (DrawX/4);
     // Assign color based on is_ball signal
     always_comb
     begin
@@ -61,9 +73,13 @@ module  color_mapper ( input        [4:0]   is_ball,            // Whether curre
         else 
         begin
             // Background with nice color gradient
-            Red = 8'h3f; 
-            Green = 8'h00;
-            Blue = 8'h7f - {1'b0, DrawX[9:3]};
+            // Red = 8'h3f; 
+            // Green =8'h7f - {1'b0, DrawX[9:3]}; //8'h00;
+            // Blue = 8'h7f - {1'b0, DrawX[9:3]};
+            // self-defined background
+            Red = R_bg[idx];
+            Green = G_bg[idx];
+            Blue = B_bg[idx];
         end
     end 
     
