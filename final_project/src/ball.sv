@@ -108,7 +108,7 @@ module  ball ( input         Clk,                // 50 MHz clock
     logic ask_control;
     always_comb
     begin
-        case(keycode)
+        case(keypress)
             // W rotation
             10'd26:
                 begin
@@ -143,12 +143,26 @@ module  ball ( input         Clk,                // 50 MHz clock
         endcase
     end
 
+    logic disable_control;
+
+    // always_comb begin
+    //     enable_control = 1'b0; // Default value
+    //     if (ask_control) begin
+    //         enable_control = 1'b1;
+    //     end
+    // end
+
 
 //                 endcase 
     logic conflict;
-    control_block control_block1(.block_x(block_x),.block_y(block_y),.control_command(control_command),.enable_control(enable_control),.block_try_x(block_x_try_rotation),.block_try_y(block_y_try_rotation));
+    logic enable_check_conflict;
+    control_logic_control control_logic_control1(.clk(Clk),.reset(Reset),.ask_control(ask_control),.finish_control(finish_control),.enable_control(enable_control));
+    control_block control_block1(.block_x(block_x),.block_y(block_y),.control_command(control_command),.ask_control(ask_control),.block_try_x(block_x_try_rotation),.block_try_y(block_y_try_rotation));
     allow_control_check allow_control_check1(.block_x(block_x_try_rotation),.block_y(block_y_try_rotation),.conflict(conflict));
     timer timer1(.clk(one_second_rising_edge),.Reset(Reset),.enable_choose(enable_choose));
+
+    logic [9:0] keypress;
+    keypress_generator keypress_generator1(.clk(frame_clk_rising_edge),.reset(Reset),.keypress(keypress));
 
 
     logic frame_clk_delayed, frame_clk_rising_edge;
@@ -157,6 +171,7 @@ module  ball ( input         Clk,                // 50 MHz clock
     logic [19:0] frame_clk_rising_edge_count=20'b0;
 
     logic one_second_rising_edge; // 输出信号，表示一秒钟的时钟边缘
+    logic zpo_rising_edge; // 输出信号，表示0.1秒钟的时钟边缘
     reg [5:0] edge_count = 0;     // 6-bit 计数器足以计数至 50
 
     always_ff @ (posedge Clk) begin
@@ -170,11 +185,20 @@ module  ball ( input         Clk,                // 50 MHz clock
             if (edge_count == 50) begin
                 one_second_rising_edge <= 1'b1; // 设置 one_second_rising_edge 为高
                 edge_count <= 0;               // 重置计数器
-            end else begin
+            end 
+            else begin
                 one_second_rising_edge <= 1'b0; // 其他情况保持 one_second_rising_edge 为低
+            end
+
+            if (edge_count == 5) begin
+                zpo_rising_edge <= 1'b1; // 设置 zpo_rising_edge 为高
+            end 
+            else begin
+                zpo_rising_edge <= 1'b0; // 其他情况保持 zpo_rising_edge 为低
             end
         end else begin
             one_second_rising_edge <= 1'b0; // 如果没有 frame_clk 上升沿，确保输出保持低
+            zpo_rising_edge <= 1'b0; // 如果没有 frame_clk 上升沿，确保输出保持低
         end
     end
 
@@ -193,6 +217,31 @@ module  ball ( input         Clk,                // 50 MHz clock
         end
     end
 
+    logic finish_control;
+    always_ff @ (posedge zpo_rising_edge) begin
+        if (Reset) begin
+            
+        end
+        else begin
+            
+            if (enable_choose) begin
+                for (int i=0; i<25; i=i+1) begin
+                    block_x[i]<=block_x_try_choose[i];
+                    block_y[i]<=block_y_try_choose[i];
+                end
+            end
+            else if (enable_control) begin
+                if (conflict==0) begin
+                    for (int i=0; i<25; i=i+1) begin
+                        block_x[i]=block_x_try_rotation[i];
+                        block_y[i]=block_y_try_rotation[i];
+                    end
+                end
+                
+        end
+        end
+    end
+
 
     // Update registers
     always_ff @ (posedge Clk)
@@ -200,12 +249,9 @@ module  ball ( input         Clk,                // 50 MHz clock
         is_ball <= is_ball0 | is_ball1 | is_ball2 | is_ball3;
         if (Reset) begin
             // block_type<=6'b000000;
-            
-
             for (int i = 0; i < 30; i = i + 1) begin
                 moving_block_ground[i] <= 20'h00000;  // Clear memory array
             end
-
             //////
             for (int i =0; i<60; i=i+1) begin
                 score_ground1[i] <= 40'h00000000;  // Clear memory array
@@ -222,23 +268,57 @@ module  ball ( input         Clk,                // 50 MHz clock
             block_type<=6'b000000; 
         end
 
-        if (ask_control) 
-        begin
-            enable_control=1'b1;
-        end
-        else if (keycode==0) begin
-            enable_control=1'b0;
-        end
-        else begin
-            enable_control=1'b0;
-        end
+
+
+
+        // if (conflict) begin
+        //     enable_control=1'b0;
+        // end
+        // else if (ask_control) 
+        // begin
+        //     enable_control=1'b1;
+        // end
+        // // else if (keycode==0) begin
+        // //     enable_control=1'b0;
+        // // end
+        // else 
+        // begin
+        //     enable_control=1'b0;
+        // end
 
 
 
         if (enable_update_moving_block_ground) begin
-            for (int i = 0; i < 30; i++) begin
+            for (int i = 5; i < 30; i++) begin
                 moving_block_ground[i] <= mbg_wire[i];
             end
+            if (conflict) begin
+                moving_block_ground[0] <= 20'h11111;
+            end
+            else begin
+                moving_block_ground[0] <= 20'h00000;
+            end
+            if (enable_control) begin
+                moving_block_ground[1] <= 20'h11111;
+            end
+            else begin
+                moving_block_ground[1] <= 20'h00000;
+            end
+            if (ask_control) begin
+                moving_block_ground[2] <= 20'h11111;
+            end
+            else begin
+                moving_block_ground[2] <= 20'h00000;
+            end
+            if (finish_control) begin
+                moving_block_ground[3] <= 20'h11111;
+            end
+            else begin
+                moving_block_ground[3] <= 20'h00000;
+            end
+            // show block_x[1], block_y[1]
+            moving_block_ground[4] = {block_x[4], block_y[4], 8'b000000};
+            
         end
 
         ///////
@@ -261,18 +341,7 @@ module  ball ( input         Clk,                // 50 MHz clock
         end
         /////
 
-        if (enable_choose) begin
-            for (int i=0; i<25; i=i+1) begin
-                block_x[i]<=block_x_try_choose[i];
-                block_y[i]<=block_y_try_choose[i];
-            end
-        end
-        else if (enable_control && (~conflict)) begin
-            for (int i=0; i<25; i=i+1) begin
-                block_x[i]=block_x_try_rotation[i];
-                block_y[i]=block_y_try_rotation[i];
-            end
-        end
+
     end
     //////// Do not modify the always_ff blocks. ////////
     
@@ -306,27 +375,100 @@ module  ball ( input         Clk,                // 50 MHz clock
 
 endmodule
 
-module allow_control_check(
-    input [5:0] block_x [24:0],  // Array of x-coordinates
-    input [5:0] block_y [24:0],  // Array of y-coordinates
-    input logic enable_check_conflict,         // Input signal indicating a boundary conflict
-    output logic conflict        // Output signal indicating a boundary conflict
+
+
+module keypress_generator(
+    input clk,    // 时钟信号
+    input reset,  // 复位信号
+    output reg [9:0] keypress  // 按键输出，10位宽
 );
 
-    // Check for out of bounds in a combinational block
-    always_comb begin
-        conflict = 1'b0;  // Default to no conflict
+// 假设系统时钟频率为50MHz
+localparam CLOCK_FREQ = 50_000_000;
+// 每秒钟的时钟周期数
+localparam COUNTER_MAX = 20;
+// 按键列表
+logic [9:0] KEYS [10:0];
+// 计数器
+reg [25:0] counter = 0;
+// 列表索引
+reg [3:0] index = 0; // 更新索引位宽以匹配KEYS数组的大小
+// 状态机状态
+reg generating = 1;
 
+assign KEYS[0] = 10'd4;
+assign KEYS[1] = 10'd4;
+assign KEYS[2] = 10'd4;
+assign KEYS[3] = 10'd4;
+assign KEYS[4] = 10'd4;
+assign KEYS[5] = 10'd4;
+assign KEYS[6] = 10'd4;
+assign KEYS[7] = 10'd4;
+assign KEYS[8] = 10'd4;
+assign KEYS[9] = 10'd4;
+assign KEYS[10] = 10'd4;
+
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        // 复位逻辑
+        counter <= 0;
+        index <= 0;
+        generating <= 1;
+        keypress <= 0;
+    end else if (generating) begin
+        if (counter < COUNTER_MAX) begin
+            counter <= counter + 1;
+            keypress <= 0;
+        end else begin
+            counter <= 0;
+            // 更新按键输出
+            keypress <= KEYS[index];
+            // 更新索引，如果到达列表末尾则停止
+            if (index < 10) begin
+                index <= index + 1;
+            end else begin
+                generating <= 0;  // 停止生成按键
+            end
+        end
+    end else begin
+        // 等待启动信号
+        if (!generating) begin
+            generating <= 1;  // 开始生成按键
+            counter <= 0;
+        end
+    end
+end
+
+endmodule
+
+module allow_control_check(
+    input [5:0] block_x [24:0],
+    input [5:0] block_y [24:0],
+    // input logic enable_check_conflict,
+    output logic conflict
+);
+
+    // 初始化conflict为0，表示没有冲突
+    initial begin
+        conflict = 0;
+    end
+
+    always_comb begin
+
+        conflict = 0; // 默认没有冲突
         for (int i = 1; i < 25; i = i + 1) begin
-            // Check if any coordinate is out of bounds
-            if (block_x[i]!=6'b111111 && block_y[i]!=6'b111111) begin
-                if (block_x[i] < 0 || block_x[i] > 19 || block_y[i] < 0 || block_y[i] > 29) begin
-                    conflict = 1'b1;  // Set conflict to 1 if any coordinate is out of bounds
-                    break;  // Exit loop early since we've found a conflict
+            // 检查坐标是否有效（不是6'b111111）
+            if (block_x[i] != 6'b111111 && block_y[i] != 6'b111111) begin
+                // 检查x和y坐标是否在指定范围内
+                if (!(block_x[i] <= 19 && block_y[i] <= 29)) begin
+                    conflict = 1; // 发现冲突
+                    break; // 一旦发现冲突，就跳出循环
                 end
             end
         end
+
     end
+
 endmodule
 
 module timer(
@@ -335,6 +477,7 @@ module timer(
     output reg enable_choose
     //output reg enable_control,
     //output [1:0] control_command
+
 );
 
 reg [5:0] counter;  // 用于计数的寄存器，足够计数几秒
@@ -350,65 +493,6 @@ always_ff @(posedge clk or posedge Reset) begin
             enable_choose <= 1'b1;  // 在第一秒时enable_choose设为1
             // control_command <= 2'b00;  // 转
         end
-        // else if (counter == 6'd1) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_choose <= 1'b1;  // 在第一秒时enable_choose设为1
-        //     control_command <= 2'b00;  // 转
-        // end
-        // else if (counter == 6'd2) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_choose <= 1'b0;
-        //     enable_control <= 1'b1;  // 在第一秒之后enable_control设为1
-
-        // end
-        // else if (counter == 6'd3) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b0;
-        //     control_command <= 2'b10;  // 左
-        // end
-        // else if (counter == 6'd4) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
-        // end
-        // else if (counter == 6'd5) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
-        //     control_command <= 2'b11;  // 下
-        // end
-        // else if (counter == 6'd6) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
-        // end
-        // else if (counter == 6'd7) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
-        //     control_command <= 2'b01;  // 右
-        // end
-        // else if (counter == 6'd8) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
-        // end
-        // else if (counter == 6'd9) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
-        //     control_command <= 2'b00;  // 转
-        // end
-        // else if (counter == 6'd10) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
-        // end
-        // else if (counter == 6'd11) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b0;  // 在第一秒之后enable_choose设为0
-        // end
-        // else if (counter == 6'd12) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        //     enable_control <= 1'b1;  // 在第一秒之后enable_choose设为1
-        // end
-        // else if (counter == 6'd13) begin
-        //     counter <= counter + 6'd1;  // 增加计数器
-        // end
-
         else begin
             enable_choose <= 1'b0;  // 在第一秒之后enable_choose设为0
             if (counter < 6'd63) begin  // 确保计数器不会溢出
@@ -420,50 +504,55 @@ end
 
 endmodule
 
-module rotation_block(
-    input [5:0] block_x [24:0],
-    input [5:0] block_y [24:0],
-    input logic enable_rotation,
-    output reg [5:0] block_try_x [24:0],
-    output reg [5:0] block_try_y [24:0]
-);
-    // Rotation center coordinates adjusted for possible 0.5 increment
-    logic signed [7:0] rotation_center_X, rotation_center_Y;
-    always_comb begin
-        rotation_center_X = block_x[0];  // Multiply by 2 to handle 0.5 step
-        rotation_center_Y = block_y[0];  // Multiply by 2 to handle 0.5 step
-    end
 
-    always_ff @(posedge enable_rotation) begin
-        block_try_x[0] <= block_x[0];  // Keep the rotation center the same
-        block_try_y[0] <= block_y[0];
-        
-        for (int i = 1; i < 25; i = i + 1) begin
-            if (block_x[i] < 20 && block_y[i] < 30) begin
-                // Apply rotation transformation formula for 90 degrees CW
-                block_try_x[i] <= (rotation_center_X - (block_y[i] *2) + rotation_center_Y ) /2 ;  // Convert back from scaled values
-                block_try_y[i] <= (rotation_center_Y - rotation_center_X + (block_x[i] *2)) /2 ;  // Convert back from scaled values
-            end else begin
-                block_try_x[i] <= 6'b111111;  // Invalid block
-                block_try_y[i] <= 6'b111111;
+module control_logic_control(
+    input logic clk,             // 时钟信号
+    input logic reset,           // 同步复位信号
+    input logic ask_control,     // 请求控制信号
+    input logic finish_control,  // 完成控制信号
+    output logic enable_control  // 使能控制信号
+);
+
+    // 用于检测上升沿的寄存器
+    logic ask_control_prev;
+    logic finish_control_prev;
+
+    always_ff @(posedge clk or posedge reset) begin
+        if (reset) begin
+            // 同步复位逻辑
+            enable_control <= 1'b0;
+            ask_control_prev <= 1'b0;
+            finish_control_prev <= 1'b0;
+        end else begin
+            // 更新前一个状态
+            ask_control_prev <= ask_control;
+            finish_control_prev <= finish_control;
+
+            // 检测ask_control的上升沿
+            if (ask_control && !ask_control_prev) begin
+                enable_control <= 1'b1;
+            end
+            // 检测finish_control的上升沿
+            else if (finish_control && !finish_control_prev) begin
+                enable_control <= 1'b0;
             end
         end
     end
+
 endmodule
 
 module control_block(
     input [5:0] block_x [24:0],
     input [5:0] block_y [24:0],
     input [1:0] control_command, // 00: rotation 01: right 10: left 11: down
-    input logic enable_control,
-    output reg [5:0] block_try_x [24:0],
-    output reg [5:0] block_try_y [24:0]
+    input logic ask_control,
+    output [5:0] block_try_x [24:0],
+    output [5:0] block_try_y [24:0]
 );
     // Rotation center coordinates adjusted for possible 0.5 increment
     logic signed [7:0] rotation_center_X, rotation_center_Y;
 
-
-    always_ff @(posedge enable_control) begin
+    always_ff @(posedge ask_control) begin
         case
             (control_command)
             2'b00: begin
@@ -473,11 +562,12 @@ module control_block(
                 rotation_center_Y = block_y[0];  // Multiply by 2 to handle 0.5 step
                 
                 for (int i = 1; i < 25; i = i + 1) begin
-                    if (block_x[i] < 20 && block_y[i] < 30) begin
+                    if (block_x[i] != 6'b111111 && block_y[i] != 6'b111111) begin
                         // Apply rotation transformation formula for 90 degrees CW
                         block_try_x[i] <= (rotation_center_X - (block_y[i] *2) + rotation_center_Y ) /2 ;  // Convert back from scaled values
                         block_try_y[i] <= (rotation_center_Y - rotation_center_X + (block_x[i] *2)) /2 ;  // Convert back from scaled values
-                    end else begin
+                    end 
+                    else begin
                         block_try_x[i] <= 6'b111111;  // Invalid block
                         block_try_y[i] <= 6'b111111;
                     end
@@ -487,7 +577,7 @@ module control_block(
                 block_try_x[0] <= block_x[0]+2;  // Keep the rotation center the same
                 block_try_y[0] <= block_y[0];
                 for (int i = 1; i < 25; i = i + 1) begin
-                    if (block_x[i] < 19) begin
+                    if (block_x[i] != 6'b111111 && block_y[i] != 6'b111111) begin
                         block_try_x[i] <= block_x[i] + 1;
                         block_try_y[i] <= block_y[i];
                     end else begin
@@ -500,7 +590,7 @@ module control_block(
                 block_try_x[0] <= block_x[0]-2;  // Keep the rotation center the same
                 block_try_y[0] <= block_y[0];
                 for (int i = 1; i < 25; i = i + 1) begin
-                    if (block_x[i] > 0) begin
+                    if (block_x[i] != 6'b111111 && block_y[i] != 6'b111111) begin
                         block_try_x[i] <= block_x[i] - 1;
                         block_try_y[i] <= block_y[i];
                     end else begin
@@ -513,7 +603,7 @@ module control_block(
                 block_try_x[0] <= block_x[0];  // Keep the rotation center the same
                 block_try_y[0] <= block_y[0]-2;
                 for (int i = 1; i < 25; i = i + 1) begin
-                    if (block_y[i] > 0) begin
+                    if (block_x[i] != 6'b111111 && block_y[i] != 6'b111111) begin
                         block_try_x[i] <= block_x[i];
                         block_try_y[i] <= block_y[i] - 1;
                     end else begin
@@ -524,6 +614,7 @@ module control_block(
             end
         endcase
     end
+    
 endmodule
 
 // module left_right_shift_block(
@@ -1414,3 +1505,33 @@ module block_memory_shift_lines(
     end
 endmodule
 
+// module rotation_block(
+//     input [5:0] block_x [24:0],
+//     input [5:0] block_y [24:0],
+//     input logic enable_rotation,
+//     output reg [5:0] block_try_x [24:0],
+//     output reg [5:0] block_try_y [24:0]
+// );
+//     // Rotation center coordinates adjusted for possible 0.5 increment
+//     logic signed [7:0] rotation_center_X, rotation_center_Y;
+//     always_comb begin
+//         rotation_center_X = block_x[0];  // Multiply by 2 to handle 0.5 step
+//         rotation_center_Y = block_y[0];  // Multiply by 2 to handle 0.5 step
+//     end
+
+//     always_ff @(posedge enable_rotation) begin
+//         block_try_x[0] <= block_x[0];  // Keep the rotation center the same
+//         block_try_y[0] <= block_y[0];
+        
+//         for (int i = 1; i < 25; i = i + 1) begin
+//             if (block_x[i] < 20 && block_y[i] < 30) begin
+//                 // Apply rotation transformation formula for 90 degrees CW
+//                 block_try_x[i] <= (rotation_center_X - (block_y[i] *2) + rotation_center_Y ) /2 ;  // Convert back from scaled values
+//                 block_try_y[i] <= (rotation_center_Y - rotation_center_X + (block_x[i] *2)) /2 ;  // Convert back from scaled values
+//             end else begin
+//                 block_try_x[i] <= 6'b111111;  // Invalid block
+//                 block_try_y[i] <= 6'b111111;
+//             end
+//         end
+//     end
+// endmodule

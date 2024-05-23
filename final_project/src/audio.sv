@@ -1,3 +1,12 @@
+/*
+ * Audio.sv
+ * Author: kennylimz@github, ZJUI ECE385 SP2020
+ * Source: https://github.com/kennylimz/ECE385_Tetris
+ * Description: connnect the audio between loaded music rom to the sv
+ * Modify: Jie Wang
+ */
+
+
 module audio ( input logic Clk, Reset, 
 				  input logic INIT_FINISH,
 				  input logic data_over,
