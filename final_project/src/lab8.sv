@@ -48,12 +48,28 @@ module lab8( input               CLOCK_50,
                                  DRAM_CKE,     //SDRAM Clock Enable
                                  DRAM_WE_N,    //SDRAM Write Enable
                                  DRAM_CS_N,    //SDRAM Chip Select
-                                 DRAM_CLK      //SDRAM Clock
+                                 DRAM_CLK,      //SDRAM Clock
+                 // Audio Interface
+                 input AUD_ADCDAT,
+				 input AUD_DACLRCK,
+				 input AUD_ADCLRCK,
+				 input AUD_BCLK,
+				 output logic AUD_DACDAT,
+				 output logic AUD_XCK,
+				 output logic I2C_SCLK,
+				 inout  logic I2C_SDAT
+                    
                     );
     
     logic Reset_h, Clk;
     logic [7:0] keycode;
     
+    logic INIT,data_over,INIT_FINISH, adc_full;
+	logic [16:0]Add;
+	logic [16:0]music_content;
+	 
+
+
     assign Clk = CLOCK_50;
     always_ff @ (posedge Clk) begin
         Reset_h <= ~(KEY[0]);        // The push buttons are active low
@@ -122,6 +138,33 @@ module lab8( input               CLOCK_50,
     // Which signal should be frame_clk?
     ball ball_instance(.Clk, .Reset(Reset_h), .frame_clk(VGA_VS), .DrawX, .DrawY, .keycode, .is_ball);
     
+
+//	audio Audio_istance (.*, .Reset(Reset_h));
+	 
+	music_rom music_instance(.*);
+	 
+	audio_interface music ( .LDATA (music_content),
+									 .RDATA (music_content),
+									 .Clk(Clk),
+									 .Reset(Reset_h),
+									 .INIT(INIT),
+									 .INIT_FINISH(  INIT_FINISH),
+									 .adc_full (adc_full),
+									 .data_over(data_over),
+									 .AUD_MCLK(AUD_XCK),
+									 .AUD_BCLK(AUD_BCLK),
+									 .AUD_ADCDAT(AUD_ADCDAT),
+									 .AUD_DACDAT(AUD_DACDAT),
+									 .AUD_DACLRCK(AUD_DACLRCK),
+									 .AUD_ADCLRCK(AUD_ADCLRCK),
+									 .I2C_SDAT(I2C_SDAT),
+									 .I2C_SCLK(I2C_SCLK),
+									 .ADCDATA(ADCDATA),
+									 
+	 );
+	 
+	 
+
     color_mapper color_instance(.*);
     
     // Display keycode on hex display
