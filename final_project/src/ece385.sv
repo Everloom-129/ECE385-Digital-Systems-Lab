@@ -1,94 +1,42 @@
-module color_mapper (
-    input [4:0] is_ball,            // Whether current pixel belongs to ball 
-    input [9:0] DrawX_in, DrawY_in, // Current pixel coordinates
+module draw_icon (
+    input logic frame_clk,               // Frame clock signal
+    input [9:0] DrawX_in, DrawY_in,      // Current pixel coordinates
     output logic [7:0] VGA_R, VGA_G, VGA_B // VGA RGB output
 );
 
-    logic [7:0] Red, Green, Blue;
-    logic [15:0] idx, ece385_idx;
+    // Constants for dimensions
+    localparam ICON_WIDTH = 32;
+    localparam ICON_HEIGHT = 32;
+    localparam SCREEN_WIDTH = 640;
+    localparam SCREEN_HEIGHT = 480;
 
-    // 已有背景图像数据
-    logic [7:0] R_bg [0:3008];
-    logic [7:0] G_bg [0:3008];
-    logic [7:0] B_bg [0:3008];
+    // Image data arrays
+    logic [7:0] R_icon [0:1023];
+    logic [7:0] G_icon [0:1023];
+    logic [7:0] B_icon [0:1023];
 
-    // 新增 ece385 icon 图像数据
-    logic [7:0] R_ece385 [0:1023];
-    logic [7:0] G_ece385 [0:1023];
-    logic [7:0] B_ece385 [0:1023];
-
+    // Load image data from files
     initial begin
-        $readmemh("resource/flower64R.txt", R_bg);
-        $readmemh("resource/flower64G.txt", G_bg);
-        $readmemh("resource/flower64B.txt", B_bg);
-        $readmemh("resource/ece385R.txt", R_ece385);
-        $readmemh("resource/ece385G.txt", G_ece385);
-        $readmemh("resource/ece385B.txt", B_ece385);
+        $readmemh("resource/ece385R.txt", R_icon);
+        $readmemh("resource/ece385G.txt", G_icon);
+        $readmemh("resource/ece385B.txt", B_icon);
     end
 
-    // 计算背景图像索引
-    assign idx = (DrawY_in / 4) * 64 + (DrawX_in / 4);
+    // Calculate index for image data
+    logic [15:0] idx;
 
-    // 计算 ece385 icon 的索引
-    // 右下角显示，假设 ece385 icon 尺寸为 32x32
-    always_comb begin
-        if ((DrawX_in >= 608) && (DrawY_in >= 448)) begin  // 右下角偏移量
-            ece385_idx = (DrawY_in - 448) * 32 + (DrawX_in - 608);
+    // Compute the index and determine if the current pixel is within the icon area
+    always_ff begin
+        if ((DrawX_in >= SCREEN_WIDTH - ICON_WIDTH) && (DrawY_in >= SCREEN_HEIGHT - ICON_HEIGHT)) begin
+            idx = (DrawY_in - (SCREEN_HEIGHT - ICON_HEIGHT)) * ICON_WIDTH + (DrawX_in - (SCREEN_WIDTH - ICON_WIDTH));
+            VGA_R = R_icon[idx];
+            VGA_G = G_icon[idx];
+            VGA_B = B_icon[idx];
         end else begin
-            ece385_idx = 0;
+            VGA_R = 8'h0;
+            VGA_G = 8'h0;
+            VGA_B = 8'h0;
         end
     end
 
-    // 选择颜色数据
-    always_comb begin
-        if ((DrawX_in >= 608) && (DrawY_in >= 448) && (ece385_idx < 1024)) begin
-            Red = R_ece385[ece385_idx];
-            Green = G_ece385[ece385_idx];
-            Blue = B_ece385[ece385_idx];
-        end else begin
-            Red = R_bg[idx];
-            Green = G_bg[idx];
-            Blue = B_bg[idx];
-        end
-    end
-
-    // Output colors to VGA
-    assign VGA_R = Red;
-    assign VGA_G = Green;
-    assign VGA_B = Blue;
-
-    // 根据 is_ball 信号分配颜色
-    always_comb begin
-        if (is_ball == 5'b00001) begin
-            // White ball
-            Red = 8'hff;
-            Green = 8'hff;
-            Blue = 8'hff;
-        end else if (is_ball == 5'b00010) begin
-            // Red ball
-            Red = 8'hff;
-            Green = 8'h00;
-            Blue = 8'h00;
-        end else if (is_ball == 5'b00011) begin
-            // Green ball
-            Red = 8'h00;
-            Green = 8'hff;
-            Blue = 8'h00;
-        end else if (is_ball == 5'b00100) begin
-            Red = 8'hff;
-            Green = 8'h00;
-            Blue = 8'hff;
-        end else begin
-            // 背景图像数据
-            if ((DrawX_in >= 608) && (DrawY_in >= 448) && (ece385_idx < 1024)) begin
-                Red = R_ece385[ece385_idx];
-                Green = G_ece385[ece385_idx];
-                Blue = B_ece385[ece385_idx];
-            end else begin
-                Red = R_bg[idx];
-                Green = G_bg[idx];
-                Blue = B_bg[idx];
-            end
-        end
-    end
 endmodule

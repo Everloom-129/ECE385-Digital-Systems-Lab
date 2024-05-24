@@ -590,9 +590,8 @@ set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 
+set_global_assignment -name TEXT_FILE resource/Tetris.txt
 set_global_assignment -name SYSTEMVERILOG_FILE score.sv
-set_global_assignment -name SYSTEMVERILOG_FILE image_rom.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ece385.sv
 set_global_assignment -name SYSTEMVERILOG_FILE music_rom.sv
 set_global_assignment -name QIP_FILE lab8_soc/synthesis/lab8_soc.qip
 set_global_assignment -name SYSTEMVERILOG_FILE hpi_io_intf.sv
@@ -601,8 +600,8 @@ set_global_assignment -name SYSTEMVERILOG_FILE lab8.sv
 set_global_assignment -name SYSTEMVERILOG_FILE HexDriver.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Color_Mapper.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ball.sv
+set_global_assignment -name SYSTEMVERILOG_FILE game_logic.sv
 set_global_assignment -name QIP_FILE vga_clk.qip
-set_global_assignment -name TEXT_FILE Tetris.txt
 set_global_assignment -name VHDL_FILE audio_interface.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE audio.sv
 set_global_assignment -name SOURCE_FILE db/lab8.cmp.rdb

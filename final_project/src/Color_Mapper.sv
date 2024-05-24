@@ -22,8 +22,8 @@ module  color_mapper ( input        [4:0]   is_ball,            // Whether curre
     
     logic [7:0] Red, Green, Blue;
     localparam BG_FLAG = 1;
-    localparam BG_SIZE = 3008; // 19200; 
-    localparam BG_ROW  = 64; //160;
+    localparam BG_SIZE = 3008; //19200; 
+    localparam BG_ROW  = 64; // 160;
     
     logic [15:0] idx;
 
