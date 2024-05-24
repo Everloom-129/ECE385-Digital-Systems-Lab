@@ -600,7 +600,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE lab8.sv
 set_global_assignment -name SYSTEMVERILOG_FILE HexDriver.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Color_Mapper.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ball.sv
-set_global_assignment -name SYSTEMVERILOG_FILE game_logic.sv
 set_global_assignment -name QIP_FILE vga_clk.qip
 set_global_assignment -name VHDL_FILE audio_interface.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE audio.sv

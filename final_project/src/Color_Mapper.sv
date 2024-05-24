@@ -21,26 +21,23 @@ module  color_mapper ( input        [4:0]   is_ball,            // Whether curre
                      );
     
     logic [7:0] Red, Green, Blue;
-    localparam BG_FLAG = 1;
-    localparam BG_SIZE = 3008; //19200; 
-    localparam BG_ROW  = 64; // 160;
+    // localparam BG_FLAG = 0;
+    // localparam BG_SIZE = 3008; //19200; 
+    // localparam BG_ROW  = 64; // 160;
     
-    logic [15:0] idx;
+    // logic [15:0] idx;
 
-        logic [7:0] R_bg [0:BG_SIZE];
-        logic [7:0] G_bg [0:BG_SIZE];
-        logic [7:0] B_bg [0:BG_SIZE];
+    //     logic [7:0] R_bg [0:BG_SIZE];
+    //     logic [7:0] G_bg [0:BG_SIZE];
+    //     logic [7:0] B_bg [0:BG_SIZE];
 
-    initial begin
-        $readmemh("resource/flower64R.txt",R_bg);
-        $readmemh("resource/flower64G.txt",G_bg);
-        $readmemh("resource/flower64B.txt",B_bg);
-        // $readmemh("resource/ZJUIR.txt",R_bg);
-        // $readmemh("resource/ZJUIG.txt",G_bg);
-        // $readmemh("resource/ZJUIB.txt",B_bg);
-    end
+    // initial begin
+    //     $readmemh("resource/ZJUIR.txt",R_bg);
+    //     $readmemh("resource/ZJUIG.txt",G_bg);
+    //     $readmemh("resource/ZJUIB.txt",B_bg);
+    // end
     
-    assign idx   = (DrawY / 4) *  BG_ROW + (DrawX/4);
+    // assign idx   = (DrawY / 4) *  BG_ROW + (DrawX/4);
 
     // Output colors to VGA
     assign VGA_R = Red;
@@ -69,7 +66,7 @@ module  color_mapper ( input        [4:0]   is_ball,            // Whether curre
             Red = 8'h00;
             Green = 8'hff;
             Blue = 8'h00;
-        end
+        end 
         else if (is_ball == 5'b00100)
         begin
         
@@ -79,16 +76,14 @@ module  color_mapper ( input        [4:0]   is_ball,            // Whether curre
         end
         else 
         begin
-            // Background with nice color gradient
-            if (BG_FLAG==1) begin
+        // Background with nice color gradient
             Red = 8'h3f; 
             Green =8'h7f - {1'b0, DrawX[9:3]}; //8'h00;
             Blue = 8'h7f - {1'b0, DrawX[9:3]};
-            end else begin // self-defined background
-            Red = R_bg[idx];
-            Green = G_bg[idx];
-            Blue = B_bg[idx];
-            end
+        // self-defined background
+            // Red = R_bg[idx];
+            // Green = G_bg[idx];
+            // Blue = B_bg[idx];
         end
     end 
     

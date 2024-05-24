@@ -11,8 +11,9 @@ __pycache__/
 **/incremental_db/
 **/db/
 **/temp/
-
-
+**/PNG To Hex/
+**/resource/
+**/image/
 
 # Temporary files
 *.rpt
