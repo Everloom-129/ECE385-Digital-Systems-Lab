@@ -74,7 +74,7 @@ module  ball ( input         Clk,                // 50 MHz clock
     assign init_x_2 = 6'd20;
     assign init_y_2 = 6'd17;
     assign init_x_3 = 6'd25;
-    assign init_y_3 = 6'd19;
+    assign init_y_3 = 6'd17;
 
     logic [5:0] num1, num2, num3;
     //assign num1 = 6'd0;
@@ -152,7 +152,7 @@ module  ball ( input         Clk,                // 50 MHz clock
     ControlModule controlModule(.clk(Clk),.ask_control(ask_control | require_update_control),.control_command(control_command),.frame_clk_rising_edge(frame_clk_rising_edge),.enable_control_hold_on(enable_control_hold_on),.output_control_command(control_command_hold_on));
     control_block control_block1(.block_x(block_x),.block_y(block_y),.control_command(control_command_hold_on),.ask_control(enable_control_hold_on),.block_try_x(reg_block_x_try_rotation),.block_try_y(reg_block_y_try_rotation), .conflict(conflict),.background(background));
     //allow_control_check allow_control_check1(.block_x(reg_block_x_try_rotation),.block_y(reg_block_y_try_rotation),.conflict(conflict),.enable_check_conflict(frame_clk_rising_edge));
-    timer timer1(.clk(one_second_rising_edge),.Reset(Reset),.enable_choose(enable_choose),.enable_control(enable_control),.already_touch_ground(already_touch_ground),.block_type(block_type));
+    timer timer1(.clk(one_second_rising_edge),.Reset(Reset),.enable_choose(enable_choose),.enable_control(enable_control));
 
     reg [19:0] background [29:0];  // Memory of moving blocks, 30 rows each 20 bits wide
     wire [19:0] background_wire [29:0];       // Wire for inout connection
@@ -405,9 +405,9 @@ module  ball ( input         Clk,                // 50 MHz clock
 
 
     logic [4:0] is_ball0, is_ball1, is_ball2, is_ball3, is_ball_ground;
-    draw_ground draw_moving_block_ground(.frame_clk(frame_clk),.DrawX(DrawX),.DrawY(DrawY),.moving_block_ground(moving_block_ground),.is_ball_color(is_ball2_color_order),.is_ball(is_ball0));
-    draw_score draw_score_ground1(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground1),.is_ball_color(is_ball3_color_order),.is_ball(is_ball1));
-    draw_score draw_score_ground2(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground2),.is_ball_color(is_ball3_color_order),.is_ball(is_ball2));
+    draw_ground draw_moving_block_ground(.frame_clk(frame_clk),.DrawX(DrawX),.DrawY(DrawY),.moving_block_ground(moving_block_ground),.is_ball_color(is_ball0_color_order),.is_ball(is_ball0));
+    draw_score draw_score_ground1(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground1),.is_ball_color(is_ball1_color_order),.is_ball(is_ball1));
+    draw_score draw_score_ground2(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground2),.is_ball_color(is_ball2_color_order),.is_ball(is_ball2));
     draw_score draw_score_ground3(.frame_clk(frame_clk),.DrawX_in(DrawX),.DrawY_in(DrawY),.score_ground(score_ground3),.is_ball_color(is_ball3_color_order),.is_ball(is_ball3));
 
     draw_ground draw_background(.frame_clk(frame_clk),.DrawX(DrawX),.DrawY(DrawY),.moving_block_ground(background),.is_ball_color(is_ball0_color_order),.is_ball(is_ball_ground));
@@ -849,7 +849,7 @@ module memory_block_on_moving_block_ground(
     input logic write_enable,                  // Enable signal for writing to the memory
     input [5:0] block_x [24:0],                // Array of X coordinates for blocks
     input [5:0] block_y [24:0],                // Array of Y coordinates for blocks
-    output reg [19:0] moving_block_ground [29:0] // Memory array of moving blocks, as inout to handle internal writes and external reads
+    inout reg [19:0] moving_block_ground [29:0] // Memory array of moving blocks, as inout to handle internal writes and external reads
 );
     integer i;
 

@@ -87,7 +87,7 @@ module memory_num_on_score_ground(
     input Clk,
     input [5:0] block_x [33:0],                // Array of X coordinates for blocks
     input [5:0] block_y [33:0],                // Array of Y coordinates for blocks
-    inout reg [39:0] score_ground [59:0] // Memory array of moving blocks, as inout to handle internal writes and external reads
+    output reg [39:0] score_ground [59:0] // Memory array of moving blocks, as inout to handle internal writes and external reads
 );
     integer i;
 
