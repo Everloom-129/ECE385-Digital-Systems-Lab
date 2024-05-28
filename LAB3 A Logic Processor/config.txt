@@ -1,0 +1,1 @@
+quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="D:/intelFPGA_lite/Lab/LAB3/simulation/qsim/" lab3 -c lab3
