@@ -49,3 +49,34 @@ https://github.com/najibghadri/Tetris200lines/tree/master
 
 ```
 
+
+
+
+
+## Help citation
+
+
+
+```
+We have finished our FPGA-based Tetris Game!
+Now, we are writing the report with Word.
+
+Now, I will give you a set of website link, I need you to surf its outline and provide me with the appropriate citation form for me. 
+Then, I need you give me one-sentence advice on this citation for my final report on the game. 
+
+## example
+
+
+https://openai.com/index/dall-e-3/
+
+### Word Citation
+[1] OpenAI, "DALL·E 3," OpenAI, 2024. [Online]. Available: https://openai.com/index/dall-e-3/. 
+
+### Advice
+In your final report, discuss how DALL·E 3's text-to-image capabilities could inspire new approaches to real-time graphics rendering in FPGA-based digital systems.
+
+
+Let us start with this:
+https://github.com/hanchenye/FPGA-tetris?tab=readme-ov-file
+```
+

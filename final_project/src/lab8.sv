@@ -139,28 +139,28 @@ module lab8( input               CLOCK_50,
     ball ball_instance(.Clk, .Reset(Reset_h), .frame_clk(VGA_VS), .DrawX, .DrawY, .keycode, .is_ball);
     
 
-	// audio Audio_instance (.Clk, .Reset(Reset_h),.INIT_FINISH,.data_over, .INIT, .Add);
+	audio Audio_instance (.Clk, .Reset(Reset_h),.INIT_FINISH,.data_over, .INIT, .Add);
 	 
-	// music_rom music_instance(.*);
+	music_rom music_instance(.*);
 	 
-	// audio_interface music ( .LDATA (music_content),
-	// 								 .RDATA (music_content),
-	// 								 .Clk(Clk),
-	// 								 .Reset(Reset_h),
-	// 								 .INIT(INIT),
-	// 								 .INIT_FINISH(  INIT_FINISH),
-	// 								 .adc_full (adc_full),
-	// 								 .data_over(data_over),
-	// 								 .AUD_MCLK(AUD_XCK),
-	// 								 .AUD_BCLK(AUD_BCLK),
-	// 								 .AUD_ADCDAT(AUD_ADCDAT),
-	// 								 .AUD_DACDAT(AUD_DACDAT),
-	// 								 .AUD_DACLRCK(AUD_DACLRCK),
-	// 								 .AUD_ADCLRCK(AUD_ADCLRCK),
-	// 								 .I2C_SDAT(I2C_SDAT),
-	// 								 .I2C_SCLK(I2C_SCLK),
-	// 								 .ADCDATA(ADCDATA),
-	//  );
+	audio_interface music ( .LDATA (music_content),
+									 .RDATA (music_content),
+									 .Clk(Clk),
+									 .Reset(Reset_h),
+									 .INIT(INIT),
+									 .INIT_FINISH(  INIT_FINISH),
+									 .adc_full (adc_full),
+									 .data_over(data_over),
+									 .AUD_MCLK(AUD_XCK),
+									 .AUD_BCLK(AUD_BCLK),
+									 .AUD_ADCDAT(AUD_ADCDAT),
+									 .AUD_DACDAT(AUD_DACDAT),
+									 .AUD_DACLRCK(AUD_DACLRCK),
+									 .AUD_ADCLRCK(AUD_ADCLRCK),
+									 .I2C_SDAT(I2C_SDAT),
+									 .I2C_SCLK(I2C_SCLK),
+									 .ADCDATA(ADCDATA),
+	 );
 	 
 	 
 
