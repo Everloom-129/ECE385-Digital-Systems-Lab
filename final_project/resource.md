@@ -42,3 +42,24 @@
 
 
 
+
+
+
+
+
+
+### 6. Challenges and Solutions
+
+#### 6.1 Technical Challenges
+
+**Extra Long Compilation Time:** The final game version required 27.21 minutes for a full compilation, primarily due to the music module and background image rendering. This prolonged compilation time posed significant difficulties during debugging.
+
+![Fig: It took nearly half an hour to compile one run, extremely painful for debugging. Acceleration and task segmentation is very necessary for FPGA programming.](image.png)
+
+**Solutions Implemented:**
+- **Incremental Compilation:** Compiled only modified portions of the design to reduce subsequent compilation times.
+- **Task Segmentation:** Divided the design into smaller, manageable modules for independent testing and validation.
+- **Optimized Synthesis Settings:** Fine-tuned synthesis and placement settings in Quartus Prime for efficient resource utilization.
+- **Parallel Processing:** Utilized maximum available processors for parallel processing to speed up compilation.
+
+These strategies effectively mitigated the impact of long compilation times, enhancing productivity and efficiency in the FPGA-based Tetris game development.

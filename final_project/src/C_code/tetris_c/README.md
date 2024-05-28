@@ -1,3 +1,5 @@
+# Tetris_C2SystemVerilog
+ECE385 Final Project C code part
 # C code in our final project
 
 1. Our game is developed based on Lab8, with a ready keyboard detector
