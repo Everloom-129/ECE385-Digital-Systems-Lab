@@ -14,6 +14,10 @@
 
 4. Find a workable FPGA code for Tetris 
 
+5. 以前的ZJUI大爹
+
+   https://lantian.pub/article/modify-computer/cyclone-iv-fpga-development-bugs-resolve.lantian/
+
 
 
 ## FPGA - Tetris Game Reference 
@@ -35,4 +39,6 @@
    http://tinyvga.com/vga-timing/640x480@60Hz
 
 4. 
+
+
 
